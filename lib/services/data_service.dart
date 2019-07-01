@@ -4,11 +4,10 @@ import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weflyapps/models/received_alert.dart';
 import 'dart:convert';
-import 'package:weflyapps/models/sent_alert.dart';
 
 class DataService {
-  var sent_alert_url =
-      "https://wa.weflysoftware.com/communications/api/alertes/";
+  var sent_alert_url = "https://wa.weflysoftware.com/communications/api/alertes/";
+  var get_employee_url = "https://wa.weflysoftware.com/communications/api/liste-employes/";
   var received_alert_url =
       "https://wa.weflysoftware.com/communications/api/alerte-receive-status/";
   var send_pieces_url =
@@ -23,21 +22,60 @@ class DataService {
   Response response;
   var token;
   var prefs;
+  bool isConnected;
 
+  //Check Internet Access
+  Future<bool> hasInternet() async {
+    bool connected;
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        print('connected');
+        connected = true;
+      }
+    } on SocketException catch (_) {
+      print('not connected');
+      connected = false;
+    }
+    return connected;
+  }
+
+  //Get received alerts
   Future<List<ReceivedAlert>> getReceivedAlert() async {
     var prefs = await SharedPreferences.getInstance();
     token = await prefs.get("token");
     List<ReceivedAlert> received = [];
-    response = await http.get(received_alert_url,
-        headers: {HttpHeaders.authorizationHeader: token});
-    if (response != null) {
-      print(response.body);
-      var next = json.decode(response.body)['next'];
-      var results = json.decode(response.body)['results'] as List;
-      received = results.map((i) => ReceivedAlert.fromJson(i)).toList();
-      prefs.setString("received", received.toString());
-      print("Size -> ${received.length}");
+    isConnected = await hasInternet();
+    if (isConnected) {
+      response = await http.get(received_alert_url,
+          headers: {HttpHeaders.authorizationHeader: token});
+      if (response != null) {
+        print(response.body);
+        var next = json.decode(response.body)['next'];
+        var results = json.decode(response.body)['results'] as List;
+        results.forEach((i) {
+          ReceivedAlert a = ReceivedAlert.fromJson(i);
+          received.add(a);
+        });
+        print('Result 0-> + ${received.toList().toString()}');
+        prefs.setString("received", response.body);
+        print("Size -> ${received.length}");
+      }
+    } else {
+      var data = prefs.get("received");
+      print('Result 1->' + json.decode(data).toString());
+      if (data != null) {
+        var results = json.decode(data)['results'] as List;
+        results.forEach((i) {
+          ReceivedAlert a = ReceivedAlert.fromJson(i);
+          received.add(a);
+        });
+        print("Size -> ${received.length}");
+      }
     }
+
     return received;
   }
+
+
 }

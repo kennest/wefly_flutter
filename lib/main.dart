@@ -19,7 +19,17 @@ class MyApp extends StatelessWidget {
           splashColor: Colors.green[800]
         ),
         appBarTheme: AppBarTheme(
-          color: Colors.primaries[9]
+          color: Colors.white,
+          textTheme: TextTheme(
+            title: TextStyle(color: Colors.green[800]),
+            body1: TextStyle(color: Colors.green[800])
+          ),
+          actionsIconTheme: IconThemeData(
+            color: Colors.green[800]
+          ),
+          iconTheme: IconThemeData(
+            color: Colors.green[800]
+          )
         )
       ),
      routes: {

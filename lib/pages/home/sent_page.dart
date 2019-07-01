@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weflyapps/models/models.dart';
-import 'package:weflyapps/repositories/alert_repository.dart';
+import 'package:weflyapps/repositories/data_repository.dart';
 
 class SentPage extends StatefulWidget {
   @override
@@ -9,7 +9,7 @@ class SentPage extends StatefulWidget {
 }
 
 class _SentPageState extends State<SentPage> {
-  AlertRepository alertRepository = AlertRepository();
+  DataRepository alertRepository = DataRepository();
   List<ReceivedAlert> received = [];
 
   @override
@@ -27,7 +27,7 @@ class _SentPageState extends State<SentPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         builder: (_) => alertRepository,
-        child: Consumer(builder: (context, AlertRepository alert, _) {
+        child: Consumer(builder: (context, DataRepository alert, _) {
           switch (alert.status) {
             case Status.Uninitialized:
               return Scaffold(

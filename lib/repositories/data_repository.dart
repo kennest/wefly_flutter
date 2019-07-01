@@ -3,7 +3,7 @@ import 'package:weflyapps/services/data_service.dart';
 import 'package:weflyapps/models/models.dart';
 
 enum Status { Uninitialized, loading, loaded,error }
-class AlertRepository with ChangeNotifier{
+class DataRepository with ChangeNotifier{
 var dataService=DataService();
 List<ReceivedAlert> received=[];
 Status _status = Status.Uninitialized;
