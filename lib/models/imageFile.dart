@@ -1,12 +1,12 @@
-class Image {
+class ImageFile {
   String image;
   int id;
   int statutId;
   String dateCreation;
 
-  Image({this.image, this.id, this.statutId, this.dateCreation});
+  ImageFile({this.image, this.id, this.statutId, this.dateCreation});
 
-  Image.fromJson(Map<String, dynamic> json) {
+  ImageFile.fromJson(Map<String, dynamic> json) {
     image = json['image'];
     id = json['id'];
     statutId = json['statut_id'];
