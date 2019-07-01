@@ -1,14 +1,16 @@
+import 'package:weflyapps/models/received_employee.dart';
+
 import 'models.dart';
-class Alert {
+class ReceivedAlert {
 	bool lu;
 	int id;
 	bool delete;
 	int user;
 	Data alerte;
 
-	Alert({this.lu, this.id, this.delete, this.user, this.alerte});
+	ReceivedAlert({this.lu, this.id, this.delete, this.user, this.alerte});
 
-	Alert.fromJson(Map<String, dynamic> json) {
+	ReceivedAlert.fromJson(Map<String, dynamic> json) {
 		lu = json['lu'];
 		id = json['id'];
 		delete = json['delete'];
@@ -61,11 +63,11 @@ class Properties {
 	List<Piece> pieceJoinAlerte;
 	bool asPoly;
 	Category categorie;
-	int surface;
+	double surface;
 	String titre;
 	String latitude;
-	Employee creerPar;
-	List<Employee> destinataires;
+	ReceivedEmployee creerPar;
+	List<ReceivedEmployee> destinataires;
 	String contenu;
 	String dateDeCreation;
 	String longitude;
@@ -82,9 +84,9 @@ class Properties {
 		surface = json['surface'];
 		titre = json['titre'];
 		latitude = json['latitude'];
-		creerPar = json['creer_par'] != null ? new Employee.fromJson(json['creer_par']) : null;
+		creerPar = json['creer_par'] != null ? new ReceivedEmployee.fromJson(json['creer_par']) : null;
 		if (json['destinataires'] != null) {
-			destinataires = new List<Employee>();(json['destinataires'] as List).forEach((v) { destinataires.add(new Employee.fromJson(v)); });
+			destinataires = new List<ReceivedEmployee>();(json['destinataires'] as List).forEach((v) { destinataires.add(new ReceivedEmployee.fromJson(v)); });
 		}
 		contenu = json['contenu'];
 		dateDeCreation = json['date_de_creation'];

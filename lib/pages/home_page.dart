@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weflyapps/pages/home/received_page.dart';
 import 'package:weflyapps/pages/home/sent_page.dart';
 import 'package:weflyapps/repositories/user_repository.dart';
+import 'package:weflyapps/services/data_service.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,6 +15,16 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   PageController _pageController=PageController();
   var currentIndex=0;
+  DataService dataService;
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    dataService=DataService();
+    dataService.getReceivedAlert();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

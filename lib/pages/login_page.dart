@@ -21,8 +21,16 @@ class _LoginPageState extends State<LoginPage> {
     // TODO: implement initState
     super.initState();
     userRepository = UserRepository();
+    _checkToken();
   }
 
+  _checkToken()async{
+    var prefs=await SharedPreferences.getInstance();
+    if(prefs.containsKey("token")){
+      print('Token -> ${prefs.get("token")}');
+      Navigator.pushNamed(context, '/home');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
