@@ -106,6 +106,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2"
+  deeply:
+    dependency: transitive
+    description:
+      name: deeply
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   dio:
     dependency: "direct main"
     description:
@@ -127,6 +134,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  execution_queue:
+    dependency: transitive
+    description:
+      name: execution_queue
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -221,6 +235,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
+  objectdb:
+    dependency: "direct main"
+    description:
+      name: objectdb
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.7+1"
   path:
     dependency: transitive
     description:
@@ -242,6 +263,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.5.0"
+  percent_indicator:
+    dependency: "direct main"
+    description:
+      name: percent_indicator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.1"
   permission_handler:
     dependency: "direct main"
     description:
@@ -282,6 +310,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  sms:
+    dependency: "direct main"
+    description:
+      name: sms
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.4"
   source_span:
     dependency: transitive
     description:

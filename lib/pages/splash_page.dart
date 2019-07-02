@@ -3,19 +3,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashPage extends StatefulWidget {
   SplashPage({Key key}) : super(key: key);
-
   _SplashPageState createState() => _SplashPageState();
 }
-
-
 
 class _SplashPageState extends State<SplashPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    Future.delayed(Duration(seconds: 2));
     _checkToken();
+    //Isolate.spawn(_checkToken(), "message");
   }
 
   _checkToken()async{
@@ -23,6 +21,8 @@ class _SplashPageState extends State<SplashPage> {
     if(prefs.containsKey("token")){
       print('Token -> ${prefs.get("token")}');
       Navigator.pushNamed(context, '/home');
+    }else{
+       Navigator.pushNamed(context, '/login');
     }
   }
   @override
@@ -39,12 +39,10 @@ class _SplashPageState extends State<SplashPage> {
           children: <Widget>[
             Image.asset(
               'assets/images/logo.png',
-              height: 180.0,
-              width: 180.0,
+              height: 170.0,
+              width: 170.0,
             ),
-            RaisedButton(onPressed: (){
-              Navigator.of(context).pushNamed('/login');
-            },child: Text("Suivant"),)
+           CircularProgressIndicator(),
           ],
         )
         
