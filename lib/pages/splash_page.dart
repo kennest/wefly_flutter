@@ -16,6 +16,8 @@ class _SplashPageState extends State<SplashPage> {
     //Isolate.spawn(_checkToken(), "message");
   }
 
+
+
   _checkToken()async{
     var prefs=await SharedPreferences.getInstance();
     if(prefs.containsKey("token")){

@@ -5,19 +5,22 @@ import 'package:weflyapps/models/models.dart';
 enum Status { Uninitialized, loading, loaded,error }
 class DataRepository with ChangeNotifier{
 var dataService=DataService();
-List<ReceivedAlert> received=[];
+List<ReceivedAlert> _received=[];
 Status _status = Status.Uninitialized;
 
 Status get status => _status;
 
+List<ReceivedAlert> get received => _received;
+
 Future<List<ReceivedAlert>> getReceived() async{
   _status=Status.loading;
   notifyListeners();
-  received=await dataService.getReceivedAlert();
-  if(received.length>0){
+  _received=await dataService.getReceivedAlert();
+  notifyListeners();
+  if(_received.length>0){
     _status=Status.loaded;
     notifyListeners();
   }
-  return received;
+  return _received;
 }
 }

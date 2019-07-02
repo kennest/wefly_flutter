@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:weflyapps/models/models.dart';
 import 'package:weflyapps/repositories/data_repository.dart';
 import 'package:weflyapps/repositories/user_repository.dart';
 import 'package:weflyapps/services/data_service.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:path/path.dart' as p;
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,13 +16,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   DataRepository dataRepository;
   var currentIndex = 0;
   DataService dataService;
+  List<ReceivedAlert> _received = [];
 
   @override
   void initState() {
     super.initState();
     dataRepository = DataRepository();
     dataService = DataService();
-    dataService.getReceivedAlert();
+    setLength();
+  }
+
+  setLength() async {
+    _received = await dataService.getReceivedAlert();
   }
 
   @override
@@ -66,6 +73,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   "Bonjour Oulai Kennest.",
                   style: TextStyle(color: Colors.green[800], fontSize: 40.0),
                 ),
+                //Graph dernieres alertes
                 Container(
                     margin: EdgeInsets.all(8.0),
                     height: 170.0,
@@ -132,6 +140,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 SizedBox(
                   height: 8.0,
                 ),
+                //Graph activites accomplis
                 Container(
                     margin: EdgeInsets.all(5.0),
                     height: 140.0,
@@ -191,7 +200,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       Text(
                         "Alertes récentes",
                         style:
-                        TextStyle(color: Colors.green[800], fontSize: 18.0),
+                            TextStyle(color: Colors.green[800], fontSize: 18.0),
                       ),
                       MaterialButton(
                         child: Text(
@@ -202,38 +211,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
+                //Alertes recentes listview
                 Container(
-                  padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                  height: 200.0,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: <Widget>[
-                      Container(
-                        height: 200.0,
-                        width: 200.0,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            image: DecorationImage(
-                                image: AssetImage('assets/images/bg.jpg'),
-                                fit: BoxFit.cover
-                            )
-                        ),
-                      ),
-                      SizedBox(width: 10.0),
-                      Container(
-                        height: 200.0,
-                        width: 200.0,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            image: DecorationImage(
-                                image: AssetImage('assets/images/bg.jpg'),
-                                fit: BoxFit.cover
-                            )
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                    height: 200.0,
+                    child: alertListView(_received))
               ],
             ),
           ),
@@ -261,6 +243,33 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
         );
       }),
+    );
+  }
+
+  alertListView(List<ReceivedAlert> data) {
+    print('Started Build->');
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: data.length,
+      itemBuilder: (BuildContext context, int index) {
+        String ext =
+            p.extension(data[index].alerte.properties.pieceJoinAlerte[1].piece);
+        print('Ext 0-> $ext');
+        if (ext == ".jpg" || ext == ".png" || ext == ".jpeg") {
+          print('Ext 1-> $ext');
+          return Container(
+            margin: EdgeInsets.fromLTRB(5.0,0.0,5.0,0.0),
+            height: 200.0,
+            width: 200.0,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                image: DecorationImage(
+                    image: NetworkImage(
+                        data[index].alerte.properties.pieceJoinAlerte[1].piece),
+                    fit: BoxFit.cover)),
+          );
+        }
+      },
     );
   }
 
