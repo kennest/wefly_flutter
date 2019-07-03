@@ -18,13 +18,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   DataRepository dataRepository;
+  UserRepository userRepository;
   var currentIndex = 0;
   DataService dataService;
 
   @override
   void initState() {
     super.initState();
-    dataRepository = DataRepository();
+    userRepository=UserRepository();
+    dataRepository = DataRepository(userRepository);
     getData();
   }
 

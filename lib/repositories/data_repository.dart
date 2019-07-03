@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weflyapps/repositories/user_repository.dart';
 import 'package:weflyapps/services/data_service.dart';
 import 'package:weflyapps/models/models.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -12,12 +13,15 @@ enum Status { Uninitialized, loading, loaded, error }
 
 class DataRepository with ChangeNotifier {
   DataService dataService = DataService();
+  final UserRepository userRepository;
   List<ReceivedAlert> _received = List();
   List<Activite> _activities = List();
   List<Activite> _completed = List();
   List<Activite> _uncompleted = List();
   double _percent=0.0;
   Status _status = Status.Uninitialized;
+
+  DataRepository(this.userRepository);
 
   Status get status => _status;
   List<Activite> get completed => _completed;
