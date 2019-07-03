@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.primaries[9],
         fontFamily: 'Arial-Rounded',
-        platform: TargetPlatform.iOS,
+        platform: TargetPlatform.android,
         buttonTheme: ButtonThemeData(
           buttonColor: Colors.green[600],
           textTheme: ButtonTextTheme.primary,

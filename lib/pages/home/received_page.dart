@@ -70,7 +70,7 @@ class _SentPageState extends State<ReceivedPage> {
 
   Widget cardItem(ReceivedAlert a) {
     Widget item;
-    String ext = p.extension(a.alerte.properties.pieceJoinAlerte[1].piece);
+    String ext = p.extension(a.alerte.properties.pieceJoinAlerte[1].remote_piece);
     if (ext == ".jpg" || ext == ".png" || ext == ".jpeg") {
       print('Extension-> $ext');
       item = InkWell(
@@ -82,7 +82,7 @@ class _SentPageState extends State<ReceivedPage> {
               borderRadius: BorderRadius.all(Radius.circular(8.0)),
               image: DecorationImage(
                   image: CachedNetworkImageProvider(
-                      a.alerte.properties.pieceJoinAlerte[1].piece),
+                      a.alerte.properties.pieceJoinAlerte[1].remote_piece),
                   fit: BoxFit.cover)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -107,7 +107,7 @@ class _SentPageState extends State<ReceivedPage> {
   }
 
   _buildCard(ReceivedAlert a) {
-    String ext = p.extension(a.alerte.properties.pieceJoinAlerte[1].piece);
+    String ext = p.extension(a.alerte.properties.pieceJoinAlerte[1].remote_piece);
     if (ext == ".jpg" || ext == ".png" || ext == ".jpeg") {
       return Padding(
         padding: EdgeInsets.only(top: 8.0, left: 10.0, bottom: 300.0),
@@ -133,7 +133,7 @@ class _SentPageState extends State<ReceivedPage> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
-                      child: Image.network(a.alerte.properties.pieceJoinAlerte[1].piece,
+                      child: Image.network(a.alerte.properties.pieceJoinAlerte[1].remote_piece,
                         fit: BoxFit.cover,
                         height: 100.0,
                         width: 100.0,

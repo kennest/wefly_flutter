@@ -6,6 +6,7 @@ import 'package:weflyapps/models/models.dart';
 import 'package:weflyapps/models/received_alert.dart';
 import 'dart:convert';
 
+
 class DataService {
   var sent_alert_url = "https://wa.weflysoftware.com/communications/api/alertes/";
   var get_employee_url = "https://wa.weflysoftware.com/communications/api/liste-employes/";
@@ -58,27 +59,27 @@ class DataService {
           ReceivedAlert a = ReceivedAlert.fromJson(i);
           received.add(a);
         });
-        print('Result 0-> + ${json.encode(received.toList())}');
+        print('Received 0-> + ${json.encode(received.toList())}');
         prefs.setString("received", json.encode(received.toList()));
-        print("Size 0-> ${received.length}");
+        print("Received 0-> ${received.length}");
         return received;
       }
     } else {
       var data = prefs.get("received");
-      print('Result 1->' + json.decode(data).toString());
+      print('Received 1->' + json.decode(data).toString());
       if (data != null) {
         var results = json.decode(data) as List;
         results.forEach((i) async{
           ReceivedAlert a = ReceivedAlert.fromJson(i);
           received.add(a);
         });
-        print("Size 1-> ${received.length}");
+
+        print("Received 1-> ${received.length}");
         return received;
       }
     }
     return received;
   }
-
 
   //Get activities
   Future<List<Activite>> getActivities() async {
@@ -97,26 +98,25 @@ class DataService {
           Activite a = Activite.fromJson(i);
           activities.add(a);
         });
-        print('Result 0-> + ${json.encode(activities.toList())}');
-        prefs.setString("activities", response.body);
-        print("Size 0-> ${activities.length}");
+        print('Activities 0-> + ${json.encode(activities.toList())}');
+        prefs.setString("activities", json.encode(activities.toList()));
+        print("Activities 0-> ${activities.length}");
         return activities;
       }
     } else {
       var data = prefs.get("activities");
-      print('Result 1->' + json.decode(data).toString());
+      print('Activities 1->' + json.decode(data).toString());
       if (data != null) {
-        var results = json.decode(data)['results'] as List;
+        var results = json.decode(data) as List;
         results.forEach((i) async{
           Activite a = Activite.fromJson(i);
           activities.add(a);
         });
-        print("Size 1-> ${activities.length}");
+        print("Activities 1-> ${activities.length}");
         return activities;
       }
     }
     return activities;
   }
-
 
 }

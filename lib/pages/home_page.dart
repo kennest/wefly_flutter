@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -83,70 +85,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   "Bonjour Oulai Kennest.",
                   style: TextStyle(color: Colors.green[800], fontSize: 40.0),
                 ),
-                //Graph dernieres alertes
-                Container(
-                    margin: EdgeInsets.all(8.0),
-                    height: 170.0,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/bg.jpg'),
-                          fit: BoxFit.cover,
-                          colorFilter: ColorFilter.mode(
-                              Colors.black.withOpacity(0.3),
-                              BlendMode.srcATop)),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Wrap(
-                      children: <Widget>[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Padding(
-                                  padding:
-                                      EdgeInsets.fromLTRB(8.0, 15.0, 10.0, 0.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      CircleAvatar(
-                                        child: Icon(Icons.add_alert),
-                                      ),
-                                      Text("Feu de Brousse",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold))
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                      20.0, 25.0, 20.0, 0.0),
-                                  child: Text(
-                                    "Description of the last alert",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Padding(
-                                padding:
-                                    EdgeInsets.fromLTRB(45.0, 50.0, 0.0, 0.0),
-                                child: FloatingActionButton(
-                                  heroTag: "alt",
-                                  backgroundColor: Colors.white,
-                                  onPressed: () {},
-                                  child: Text(
-                                    "Ok",
-                                    style: TextStyle(color: Colors.green[800]),
-                                  ),
-                                ))
-                          ],
-                        ),
-                      ],
-                    )),
+                //Graph dernieres activites
+                lastActivity(data),
                 SizedBox(
                   height: 8.0,
                 ),
@@ -206,60 +146,159 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
+  lastActivity(DataRepository data) {
+    if (data.uncompleted.length > 0) {
+      return Container(
+          margin: EdgeInsets.all(8.0),
+          height: 170.0,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/images/work.jpg'),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.3), BlendMode.srcATop)),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: InkWell(
+              highlightColor: Colors.green,
+              splashColor: Colors.green[800],
+              onTap: () {},
+              child: Wrap(
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0.0, 15.0, 35.0, 0.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                    "${data.uncompleted.last.titre.substring(0, 12)}",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold))
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0.0, 25.0, 65.0, 0.0),
+                            child: Text(
+                              "${data.uncompleted.last.description.substring(0, 12)}",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 0.0),
+                            child: Text(
+                              "Du ${data.uncompleted.last.dateDebut} au ${data.uncompleted.last.dateFin}",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
+                        ],
+                      ),
+                      Padding(
+                          padding: EdgeInsets.fromLTRB(45.0, 50.0, 0.0, 0.0),
+                          child: FloatingActionButton(
+                            heroTag: "alt",
+                            backgroundColor: Colors.white,
+                            onPressed: () {},
+                            child: Icon(
+                              Icons.build,
+                              color: Colors.green[800],
+                            ),
+                          ))
+                    ],
+                  ),
+                ],
+              )));
+    } else {
+      return CircularProgressIndicator();
+    }
+  }
 
   //received alerts listview
   alertListView(List<ReceivedAlert> received) {
     print('Started Build->');
-    return  received.length==0? CircularProgressIndicator():
-        Container(
-          height: 200.0,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: received.length,
-            itemBuilder: (BuildContext context, int index) {
-              String ext =
-              p.extension(
-                  received[index].alerte.properties.pieceJoinAlerte[1]
-                      .piece);
-              print('Ext 0-> $ext');
-              if (ext == ".jpg" || ext == ".png" || ext == ".jpeg") {
-                print('Ext 1-> $ext');
-                return Container(
-                  margin: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
-                  height: 200.0,
-                  width: 200.0,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      image: DecorationImage(
-                          image: NetworkImage(
-                              received[index].alerte.properties
-                                  .pieceJoinAlerte[1].piece),
-                          fit: BoxFit.cover)),
-                  child: Stack(
-                    children: <Widget>[
-                      Positioned(
-                        left: 130.0,
-                        top:130.0,
-                        child: Image.network(received[index].alerte.properties.categorie.icone,height: 60.0,),
-                      )
-                    ],
-                  ),
-                );
-              }
-            },
-          ),
-        )
-            ;
+    return received.length == 0
+        ? CircularProgressIndicator()
+        : Container(
+            height: 200.0,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: received.length,
+              itemBuilder: (BuildContext context, int index) {
+                String ext = p.extension(received[index]
+                    .alerte
+                    .properties
+                    .pieceJoinAlerte[1]
+                    .remote_piece);
+                print('Ext 0-> $ext');
+                if (ext == ".jpg" || ext == ".png" || ext == ".jpeg") {
+                  print('Ext 1-> $ext');
+                  return Container(
+                    margin: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
+                    height: 200.0,
+                    width: 200.0,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        image: DecorationImage(
+                            image: File(received[index]
+                                .alerte
+                                .properties
+                                .pieceJoinAlerte[1]
+                                .local_piece).existsSync()?FileImage(File(received[index]
+                                .alerte
+                                .properties
+                                .pieceJoinAlerte[1]
+                                .local_piece)):NetworkImage(received[index]
+                                .alerte
+                                .properties
+                                .pieceJoinAlerte[1]
+                                .remote_piece),
+                            fit: BoxFit.cover)),
+                    child: Stack(
+                      children: <Widget>[
+                        Positioned(
+                          left: 20.0,
+                          top: 150.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "${received[index].alerte.properties.categorie.nom}",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Image.network(
+                                received[index]
+                                    .alerte
+                                    .properties
+                                    .categorie
+                                    .icone,
+                                height: 35.0,
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
+          );
   }
 
   //Activities listview
-  activitiesListView(DataRepository data){
+  activitiesListView(DataRepository data) {
     return Container(
         margin: EdgeInsets.all(5.0),
         height: 140.0,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0),
-            color: Colors.white),
+            borderRadius: BorderRadius.circular(8.0), color: Colors.white),
         child: Wrap(
           children: <Widget>[
             Row(
@@ -269,8 +308,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      padding:
-                      EdgeInsets.fromLTRB(8.0, 15.0, 10.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(8.0, 15.0, 10.0, 0.0),
                       child: Row(
                         children: <Widget>[
                           Text("Vos activites de la journée",
@@ -282,8 +320,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ),
                     ),
                     Padding(
-                      padding:
-                      EdgeInsets.fromLTRB(8.0, 20.0, 0.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(8.0, 20.0, 0.0, 0.0),
                       child: Column(
                         children: <Widget>[
                           Text(
@@ -292,7 +329,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                           FlatButton(
                             child: Text("Voir tout..."),
-                            onPressed: (){},
+                            onPressed: () {},
                           ),
                         ],
                       ),
@@ -300,13 +337,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ],
                 ),
                 Padding(
-                    padding:
-                    EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+                    padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
                     child: CircularPercentIndicator(
                       radius: 60.0,
                       lineWidth: 5.0,
                       percent: data.percent,
-                      center: new Text("${(data.percent)*100}%"),
+                      center: new Text("${(data.percent) * 100}%"),
                       progressColor: Colors.green,
                     ))
               ],

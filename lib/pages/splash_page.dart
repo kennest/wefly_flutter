@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 class SplashPage extends StatefulWidget {
   SplashPage({Key key}) : super(key: key);
   _SplashPageState createState() => _SplashPageState();
@@ -12,11 +12,14 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     Future.delayed(Duration(seconds: 2));
+    _getPermissions();
     _checkToken();
     //Isolate.spawn(_checkToken(), "message");
   }
 
-
+  _getPermissions()async{
+    await PermissionHandler().requestPermissions([PermissionGroup.storage,PermissionGroup.microphone,PermissionGroup.location,PermissionGroup.camera]);
+  }
 
   _checkToken()async{
     var prefs=await SharedPreferences.getInstance();
