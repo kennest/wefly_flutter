@@ -1,15 +1,16 @@
 class Category {
 	int entreprise;
-	String icone;
+	String remote_icone;
+	String local_icone;
 	int id;
 	String nom;
 	String dateDeCreation;
 
-	Category({this.entreprise, this.icone, this.id, this.nom, this.dateDeCreation});
+	Category({this.entreprise, this.remote_icone, this.id, this.nom, this.dateDeCreation,this.local_icone});
 
 	Category.fromJson(Map<String, dynamic> json) {
 		entreprise = json['entreprise'];
-		icone = json['icone'];
+		remote_icone = json['icone'];
 		id = json['id'];
 		nom = json['nom'];
 		dateDeCreation = json['date_de_creation'];
@@ -18,7 +19,7 @@ class Category {
 	Map<String, dynamic> toJson() {
 		final Map<String, dynamic> data = new Map<String, dynamic>();
 		data['entreprise'] = this.entreprise;
-		data['icone'] = this.icone;
+		data['icone'] = this.remote_icone;
 		data['id'] = this.id;
 		data['nom'] = this.nom;
 		data['date_de_creation'] = this.dateDeCreation;

@@ -272,12 +272,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 "${received[index].alerte.properties.categorie.nom}",
                                 style: TextStyle(color: Colors.white),
                               ),
+                              File(received[index]
+                                  .alerte
+                                  .properties
+                                  .categorie
+                                  .local_icone).existsSync()?
+                              Image.file(
+                                File(received[index]
+                                    .alerte
+                                    .properties
+                                    .categorie
+                                    .local_icone),
+                                height: 35.0,
+                              ):
                               Image.network(
                                 received[index]
                                     .alerte
                                     .properties
                                     .categorie
-                                    .icone,
+                                    .remote_icone,
                                 height: 35.0,
                               )
                             ],

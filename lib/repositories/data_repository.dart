@@ -43,9 +43,9 @@ class DataRepository with ChangeNotifier {
         Uri uri=Uri.parse(p.remote_piece);
         p.local_piece="${dir.path}${uri.pathSegments.last}";
       }
-      doDownload(a.alerte.properties.categorie.icone);
-      Uri uri=Uri.parse(a.alerte.properties.categorie.icone);
-      a.alerte.properties.categorie.icone="${dir.path}${uri.pathSegments.last}";
+      doDownload(a.alerte.properties.categorie.remote_icone);
+      Uri uri=Uri.parse(a.alerte.properties.categorie.remote_icone);
+      a.alerte.properties.categorie.local_icone="${dir.path}${uri.pathSegments.last}";
     }
     print('Received 0-> + ${json.encode(_received.toList())}');
     prefs.setString("received", json.encode(_received.toList()));
@@ -110,26 +110,45 @@ class DataRepository with ChangeNotifier {
   }
 
   Future<void> doDownload(String url)async{
-    HttpClient client = new HttpClient();
-    Directory dir=await getApplicationDocumentsDirectory();
-    //Directory dir=Directory("/data/Pictures/com.codebox.apps.wefly.weflyapps/Pictures/");
-    var _downloadData = List<int>();
-    Uri uri=Uri.parse(url);
-    var fileSave = new File("${dir.path}${uri.pathSegments.last}");
-    if(!fileSave.existsSync()){
-      client.getUrl(Uri.parse(url))
-          .then((HttpClientRequest request) {
-        return request.close();
-      })
-          .then((HttpClientResponse response) {
-        response.listen((d) => _downloadData.addAll(d),
-            onDone: () {
-              fileSave.writeAsBytes(_downloadData);
-              print("Download Done!-> ${uri.pathSegments.last}");
-            }
-        );
-      });
+    bool isConnected=await hasInternet();
+    if(isConnected){
+      HttpClient client = new HttpClient();
+      Directory dir=await getApplicationDocumentsDirectory();
+      //Directory dir=Directory("/data/Pictures/com.codebox.apps.wefly.weflyapps/Pictures/");
+      var _downloadData = List<int>();
+      Uri uri=Uri.parse(url);
+      var fileSave = new File("${dir.path}${uri.pathSegments.last}");
+      if(!fileSave.existsSync()){
+        client.getUrl(Uri.parse(url))
+            .then((HttpClientRequest request) {
+          return request.close();
+        })
+            .then((HttpClientResponse response) {
+          response.listen((d) => _downloadData.addAll(d),
+              onDone: () {
+                fileSave.writeAsBytes(_downloadData);
+                print("Download Done!-> ${uri.pathSegments.last}");
+              }
+          );
+        });
+      }
     }
+  }
+
+  //Check Internet Access
+  Future<bool> hasInternet() async {
+    bool connected;
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        print('connected');
+        connected = true;
+      }
+    } on SocketException catch (_) {
+      print('not connected');
+      connected = false;
+    }
+    return connected;
   }
 
 }

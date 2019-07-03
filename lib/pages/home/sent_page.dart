@@ -49,7 +49,7 @@ class _SentPageState extends State<SentPage> {
                     contentPadding: EdgeInsets.all(8.0),
                     leading: CircleAvatar(
                       child: Image.network(
-                          received[pos].alerte.properties.categorie.icone),
+                          received[pos].alerte.properties.categorie.remote_icone),
                     ),
                     title: Text(received[pos].alerte.properties.titre),
                     subtitle: Text(received[pos].alerte.properties.contenu),
