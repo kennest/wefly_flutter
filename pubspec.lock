@@ -106,13 +106,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2"
-  deeply:
-    dependency: transitive
-    description:
-      name: deeply
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
   dio:
     dependency: "direct main"
     description:
@@ -134,13 +127,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
-  execution_queue:
-    dependency: transitive
-    description:
-      name: execution_queue
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -235,13 +221,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
-  objectdb:
-    dependency: "direct main"
-    description:
-      name: objectdb
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.7+1"
   path:
     dependency: transitive
     description:
@@ -325,7 +304,7 @@ packages:
     source: hosted
     version: "1.5.5"
   sqflite:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: sqflite
       url: "https://pub.dartlang.org"

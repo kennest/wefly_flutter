@@ -23,11 +23,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     dataRepository = DataRepository();
-    getReceivedAlerts();
+    getData();
   }
 
-  getReceivedAlerts() async {
+  getData() async {
     await dataRepository.fetchReceivedAlerts();
+    await dataRepository.fetchActivities();
   }
 
   @override
@@ -150,57 +151,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   height: 8.0,
                 ),
                 //Graph activites accomplis
-                Container(
-                    margin: EdgeInsets.all(5.0),
-                    height: 140.0,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        color: Colors.white),
-                    child: Wrap(
-                      children: <Widget>[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding:
-                                      EdgeInsets.fromLTRB(8.0, 15.0, 10.0, 0.0),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Text("Vos activites de la journee",
-                                          style: TextStyle(
-                                              color: Colors.green[800],
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold))
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.fromLTRB(8.0, 20.0, 0.0, 0.0),
-                                  child: Text(
-                                    "1 sur 4 completés",
-                                    style: TextStyle(color: Colors.green),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Padding(
-                                padding:
-                                    EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
-                                child: CircularPercentIndicator(
-                                  radius: 60.0,
-                                  lineWidth: 5.0,
-                                  percent: 0.2,
-                                  center: new Text("25%"),
-                                  progressColor: Colors.green,
-                                ))
-                          ],
-                        ),
-                      ],
-                    )),
+                activitiesListView(data),
                 Padding(
                   padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 15.0),
                   child: Row(
@@ -228,14 +179,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           bottomNavigationBar: Row(
             children: <Widget>[
               IconButton(
+                color: Colors.green[800],
                 icon: Icon(Icons.home),
                 onPressed: () {},
               ),
               IconButton(
+                color: Colors.green[500],
                 icon: Icon(Icons.send),
                 onPressed: () {},
               ),
               IconButton(
+                color: Colors.green[500],
                 icon: Icon(Icons.receipt),
                 onPressed: () {},
               ),
@@ -252,6 +206,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
+
+  //received alerts listview
   alertListView(List<ReceivedAlert> received) {
     print('Started Build->');
     return  received.length==0? CircularProgressIndicator():
@@ -279,12 +235,84 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               received[index].alerte.properties
                                   .pieceJoinAlerte[1].piece),
                           fit: BoxFit.cover)),
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned(
+                        left: 130.0,
+                        top:130.0,
+                        child: Image.network(received[index].alerte.properties.categorie.icone,height: 60.0,),
+                      )
+                    ],
+                  ),
                 );
               }
             },
           ),
         )
             ;
+  }
+
+  //Activities listview
+  activitiesListView(DataRepository data){
+    return Container(
+        margin: EdgeInsets.all(5.0),
+        height: 140.0,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8.0),
+            color: Colors.white),
+        child: Wrap(
+          children: <Widget>[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding:
+                      EdgeInsets.fromLTRB(8.0, 15.0, 10.0, 0.0),
+                      child: Row(
+                        children: <Widget>[
+                          Text("Vos activites de la journée",
+                              style: TextStyle(
+                                  color: Colors.green[800],
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold))
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                      EdgeInsets.fromLTRB(8.0, 20.0, 0.0, 0.0),
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            "${data.completed.length} sur ${data.activities.length} completés",
+                            style: TextStyle(color: Colors.green),
+                          ),
+                          FlatButton(
+                            child: Text("Voir tout..."),
+                            onPressed: (){},
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                Padding(
+                    padding:
+                    EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+                    child: CircularPercentIndicator(
+                      radius: 60.0,
+                      lineWidth: 5.0,
+                      percent: data.percent,
+                      center: new Text("${(data.percent)*100}%"),
+                      progressColor: Colors.green,
+                    ))
+              ],
+            ),
+          ],
+        ));
   }
 
   @override

@@ -30,6 +30,7 @@ class UserRepository with ChangeNotifier {
   void doLogout()async{
     bool loggedOut=await authService.logout();
     if(loggedOut){
+      print("Logout -> $loggedOut");
       _status=Status.Unauthenticated;
       notifyListeners();
     }

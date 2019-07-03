@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weflyapps/models/models.dart';
 import 'package:weflyapps/models/received_alert.dart';
 import 'dart:convert';
 
@@ -51,14 +52,14 @@ class DataService {
           headers: {HttpHeaders.authorizationHeader: token});
       if (response != null) {
         print(response.body);
-        var next = json.decode(response.body)['next'];
-        var results = json.decode(response.body)['results'] as List;
+        var next = json.decode(utf8.decode(response.bodyBytes))['next'];
+        var results = json.decode(utf8.decode(response.bodyBytes))['results'] as List;
         results.forEach((i) async{
           ReceivedAlert a = ReceivedAlert.fromJson(i);
           received.add(a);
         });
-        print('Result 0-> + ${received.toList().toString()}');
-        prefs.setString("received", response.body);
+        print('Result 0-> + ${json.encode(received.toList())}');
+        prefs.setString("received", json.encode(received.toList()));
         print("Size 0-> ${received.length}");
         return received;
       }
@@ -66,7 +67,7 @@ class DataService {
       var data = prefs.get("received");
       print('Result 1->' + json.decode(data).toString());
       if (data != null) {
-        var results = json.decode(data)['results'] as List;
+        var results = json.decode(data) as List;
         results.forEach((i) async{
           ReceivedAlert a = ReceivedAlert.fromJson(i);
           received.add(a);
@@ -76,6 +77,45 @@ class DataService {
       }
     }
     return received;
+  }
+
+
+  //Get activities
+  Future<List<Activite>> getActivities() async {
+    var prefs = await SharedPreferences.getInstance();
+    token = await prefs.get("token");
+    List<Activite> activities = [];
+    isConnected = await hasInternet();
+    if (isConnected) {
+      response = await http.get(get_activites_url,
+          headers: {HttpHeaders.authorizationHeader: token});
+      if (response != null) {
+        print(response.body);
+        var next = json.decode(utf8.decode(response.bodyBytes))['next'];
+        var results = json.decode(utf8.decode(response.bodyBytes))['results'] as List;
+        results.forEach((i) async{
+          Activite a = Activite.fromJson(i);
+          activities.add(a);
+        });
+        print('Result 0-> + ${json.encode(activities.toList())}');
+        prefs.setString("activities", response.body);
+        print("Size 0-> ${activities.length}");
+        return activities;
+      }
+    } else {
+      var data = prefs.get("activities");
+      print('Result 1->' + json.decode(data).toString());
+      if (data != null) {
+        var results = json.decode(data)['results'] as List;
+        results.forEach((i) async{
+          Activite a = Activite.fromJson(i);
+          activities.add(a);
+        });
+        print("Size 1-> ${activities.length}");
+        return activities;
+      }
+    }
+    return activities;
   }
 
 
