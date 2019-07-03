@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    userRepository=UserRepository();
+    userRepository = UserRepository();
     dataRepository = DataRepository(userRepository);
     getData();
   }
@@ -83,9 +83,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           body: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                Text(
-                  "Bonjour Oulai Kennest.",
-                  style: TextStyle(color: Colors.green[800], fontSize: 40.0),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
+                  child: Text(
+                    "Bonjour Oulai Kennest.",
+                    style: TextStyle(color: Colors.green[800], fontSize: 30.0),
+                  ),
                 ),
                 //Graph dernieres activites
                 lastActivity(data),
@@ -100,7 +103,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        "Alertes récentes",
+                        "Vos alertes récentes",
                         style:
                             TextStyle(color: Colors.green[800], fontSize: 18.0),
                       ),
@@ -207,7 +210,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           child: FloatingActionButton(
                             heroTag: "alt",
                             backgroundColor: Colors.white,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/activity-detail',arguments: data.uncompleted.last);
+                            },
                             child: Icon(
                               Icons.build,
                               color: Colors.green[800],
@@ -249,18 +254,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.circular(10.0),
                         image: DecorationImage(
                             image: File(received[index]
-                                .alerte
-                                .properties
-                                .pieceJoinAlerte[1]
-                                .local_piece).existsSync()?FileImage(File(received[index]
-                                .alerte
-                                .properties
-                                .pieceJoinAlerte[1]
-                                .local_piece)):NetworkImage(received[index]
-                                .alerte
-                                .properties
-                                .pieceJoinAlerte[1]
-                                .remote_piece),
+                                        .alerte
+                                        .properties
+                                        .pieceJoinAlerte[1]
+                                        .local_piece)
+                                    .existsSync()
+                                ? FileImage(File(received[index]
+                                    .alerte
+                                    .properties
+                                    .pieceJoinAlerte[1]
+                                    .local_piece))
+                                : NetworkImage(received[index]
+                                    .alerte
+                                    .properties
+                                    .pieceJoinAlerte[1]
+                                    .remote_piece),
                             fit: BoxFit.cover)),
                     child: Stack(
                       children: <Widget>[
@@ -275,26 +283,27 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 style: TextStyle(color: Colors.white),
                               ),
                               File(received[index]
-                                  .alerte
-                                  .properties
-                                  .categorie
-                                  .local_icone).existsSync()?
-                              Image.file(
-                                File(received[index]
-                                    .alerte
-                                    .properties
-                                    .categorie
-                                    .local_icone),
-                                height: 35.0,
-                              ):
-                              Image.network(
-                                received[index]
-                                    .alerte
-                                    .properties
-                                    .categorie
-                                    .remote_icone,
-                                height: 35.0,
-                              )
+                                          .alerte
+                                          .properties
+                                          .categorie
+                                          .local_icone)
+                                      .existsSync()
+                                  ? Image.file(
+                                      File(received[index]
+                                          .alerte
+                                          .properties
+                                          .categorie
+                                          .local_icone),
+                                      height: 35.0,
+                                    )
+                                  : Image.network(
+                                      received[index]
+                                          .alerte
+                                          .properties
+                                          .categorie
+                                          .remote_icone,
+                                      height: 35.0,
+                                    )
                             ],
                           ),
                         ),

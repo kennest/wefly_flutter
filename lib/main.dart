@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weflyapps/pages/home/activity_detail.dart';
 import 'package:weflyapps/pages/pages.dart';
 import 'package:provider/provider.dart';
 import 'package:weflyapps/repositories/data_repository.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
             '/home': (context) => HomePage(),
             '/login': (context) => LoginPage(),
             '/alert': (context) => AlertPage(),
+            '/activity-detail': (context) => ActivityDetailPage(),
           },
         ));
   }
