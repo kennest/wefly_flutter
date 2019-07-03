@@ -20,7 +20,7 @@ class _SentPageState extends State<SentPage> {
   }
 
   setLength() async {
-    received = await alertRepository.getReceived();
+    await alertRepository.fetchReceivedAlerts();
   }
 
   @override

@@ -53,27 +53,28 @@ class DataService {
         print(response.body);
         var next = json.decode(response.body)['next'];
         var results = json.decode(response.body)['results'] as List;
-        results.forEach((i) {
+        results.forEach((i) async{
           ReceivedAlert a = ReceivedAlert.fromJson(i);
           received.add(a);
         });
         print('Result 0-> + ${received.toList().toString()}');
         prefs.setString("received", response.body);
-        print("Size -> ${received.length}");
+        print("Size 0-> ${received.length}");
+        return received;
       }
     } else {
       var data = prefs.get("received");
       print('Result 1->' + json.decode(data).toString());
       if (data != null) {
         var results = json.decode(data)['results'] as List;
-        results.forEach((i) {
+        results.forEach((i) async{
           ReceivedAlert a = ReceivedAlert.fromJson(i);
           received.add(a);
         });
-        print("Size -> ${received.length}");
+        print("Size 1-> ${received.length}");
+        return received;
       }
     }
-
     return received;
   }
 

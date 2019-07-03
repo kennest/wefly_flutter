@@ -44,10 +44,9 @@ class _SplashPageState extends State<SplashPage> {
               height: 170.0,
               width: 170.0,
             ),
-           CircularProgressIndicator(),
+            CircularProgressIndicator(),
           ],
-        )
-        
+        ) 
       ),
     ));
   }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:weflyapps/models/models.dart';
 import 'package:weflyapps/repositories/data_repository.dart';
+import 'package:weflyapps/repositories/data_repository.dart' as prefix0;
 import 'package:weflyapps/repositories/user_repository.dart';
 import 'package:weflyapps/services/data_service.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -16,18 +18,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   DataRepository dataRepository;
   var currentIndex = 0;
   DataService dataService;
-  List<ReceivedAlert> _received = [];
 
   @override
   void initState() {
     super.initState();
     dataRepository = DataRepository();
-    dataService = DataService();
-    setLength();
+    getReceivedAlerts();
   }
 
-  setLength() async {
-    _received = await dataService.getReceivedAlert();
+  getReceivedAlerts() async {
+    await dataRepository.fetchReceivedAlerts();
   }
 
   @override
@@ -51,18 +51,27 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               elevation: 5.0,
               child: Scaffold(
                 body: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      ListTile(
-                        title: Text("Profile"),
-                        onTap: () {},
-                      ),
-                      ListTile(
-                        title: Text("Parametres"),
-                        onTap: () {},
-                      )
-                    ],
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 25.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        ListTile(
+                          title: Text("Profile"),
+                          onTap: () {},
+                        ),
+                        ListTile(
+                          title: Text("Parametres"),
+                          onTap: () {},
+                        ),
+                        ListTile(
+                          title: Text("Quitter"),
+                          onTap: () {
+                            SystemNavigator.pop();
+                          },
+                        )
+                      ],
+                    ),
                   ),
                 ),
               )),
@@ -212,10 +221,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
                 //Alertes recentes listview
-                Container(
-                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                    height: 200.0,
-                    child: alertListView(_received))
+                alertListView(data.received)
               ],
             ),
           ),
@@ -246,37 +252,45 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  alertListView(List<ReceivedAlert> data) {
+  alertListView(List<ReceivedAlert> received) {
     print('Started Build->');
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: data.length,
-      itemBuilder: (BuildContext context, int index) {
-        String ext =
-            p.extension(data[index].alerte.properties.pieceJoinAlerte[1].piece);
-        print('Ext 0-> $ext');
-        if (ext == ".jpg" || ext == ".png" || ext == ".jpeg") {
-          print('Ext 1-> $ext');
-          return Container(
-            margin: EdgeInsets.fromLTRB(5.0,0.0,5.0,0.0),
-            height: 200.0,
-            width: 200.0,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                image: DecorationImage(
-                    image: NetworkImage(
-                        data[index].alerte.properties.pieceJoinAlerte[1].piece),
-                    fit: BoxFit.cover)),
-          );
-        }
-      },
-    );
+    return  received.length==0? CircularProgressIndicator():
+        Container(
+          height: 200.0,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: received.length,
+            itemBuilder: (BuildContext context, int index) {
+              String ext =
+              p.extension(
+                  received[index].alerte.properties.pieceJoinAlerte[1]
+                      .piece);
+              print('Ext 0-> $ext');
+              if (ext == ".jpg" || ext == ".png" || ext == ".jpeg") {
+                print('Ext 1-> $ext');
+                return Container(
+                  margin: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
+                  height: 200.0,
+                  width: 200.0,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                          image: NetworkImage(
+                              received[index].alerte.properties
+                                  .pieceJoinAlerte[1].piece),
+                          fit: BoxFit.cover)),
+                );
+              }
+            },
+          ),
+        )
+            ;
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    Provider.of<UserRepository>(context).dispose();
+    //Provider.of<DataRepository>(context).dispose();
   }
 }

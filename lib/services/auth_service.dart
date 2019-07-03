@@ -10,8 +10,8 @@ class AuthService {
   //Do login
   Future<bool> login(String username, String password) async {
     Map data = {"username":username,"password":password};
-    response = await http.post(loginUrl,body: json.encode(data));
-    if (response != null) {
+          response = await http.post(loginUrl,body: json.encode(data));
+            if (response != null) {
       print('Response -> ${response.body}');
       var token = json.decode(response.body)['token'];
       print(token);

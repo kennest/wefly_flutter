@@ -1,6 +1,6 @@
 import 'package:weflyapps/models/received_employee.dart';
-
 import 'models.dart';
+
 class ReceivedAlert {
 	bool lu;
 	int id;

@@ -23,7 +23,7 @@ class _SentPageState extends State<ReceivedPage> {
   }
 
   setLength() async {
-    received = await alertRepository.getReceived();
+     await alertRepository.fetchReceivedAlerts();
   }
 
   @override
@@ -55,7 +55,7 @@ class _SentPageState extends State<ReceivedPage> {
                   },
                 ),
                 onRefresh: () {
-                  Provider.of<DataRepository>(context).getReceived();
+                  Provider.of<DataRepository>(context).fetchReceivedAlerts();
                 },
               ));
             case Status.error:
