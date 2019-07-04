@@ -51,6 +51,7 @@ class MyApp extends StatelessWidget {
             '/login': (context) => LoginPage(),
             '/alert': (context) => AlertPage(),
             '/activity-detail': (context) => ActivityDetailPage(),
+            '/activity-page': (context) => ActivityPage(),
           },
         ));
   }

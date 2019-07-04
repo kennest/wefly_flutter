@@ -125,11 +125,12 @@ class DataService {
     return activities;
   }
 
-  Future<void> updateActivite(send.Activite a) async {
+  //Update activity status
+  Future<bool> updateActivite(send.Activite a) async {
     var prefs = await SharedPreferences.getInstance();
     token = await prefs.get("token");
+    bool updated=false;
     print("Update act Body json -> ${json.encode(a.toJson())}");
-
     bool isConnected = await hasInternet();
     if (isConnected) {
       response = await http.put(get_activites_url,
@@ -138,14 +139,21 @@ class DataService {
 
       print("Update Act resp Code -> ${response.statusCode}");
       if (response.statusCode == 201 || response.statusCode==200) {
-        print("Update Act resp -> ${json.decode(response.body)}");
-        a.images.forEach((i) async {
+        print("Update Act resp -> ${json.decode(utf8.decode(response.bodyBytes))}");
+        String res=json.decode(utf8.decode(response.bodyBytes));
+        if(res==a.statutAct){
+          updated=true;
+          a.images.forEach((i) async {
             await sendActiviteImage(i, a);
-        });
+          });
+          return updated;
+        }
       }
+      return updated;
     }
   }
 
+  //Send activivity Image
   Future<void> sendActiviteImage(ImageFile image, send.Activite a) async {
     bool isConnected = await hasInternet();
     var prefs = await SharedPreferences.getInstance();
@@ -169,7 +177,7 @@ class DataService {
           body: json.encode(data));
 
       print("Send Act Image resp Code -> ${response.statusCode}");
-      if (response.statusCode == 201) {
+      if (response.statusCode == 201 || response.statusCode==200) {
         print("Send Act Images resp -> ${json.decode(response.body)}");
       }
     }

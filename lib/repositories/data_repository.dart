@@ -95,8 +95,13 @@ class DataRepository with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateActivite(send.Activite a) async {
-    await dataService.updateActivite(a);
+  Future<bool> updateActivite(send.Activite a) async {
+    bool updated=await dataService.updateActivite(a);
+    if(updated) {
+      notifyListeners();
+      return updated;
+    }
+    return updated;
   }
 
   //Compute the percent of activities completed

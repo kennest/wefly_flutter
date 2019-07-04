@@ -15,26 +15,23 @@ class ActivityDetailPage extends StatefulWidget {
 }
 
 class _ActivityDetailPageState extends State<ActivityDetailPage> {
-  UserRepository userRepository;
-  File _image;
+   File _image;
   List<File> _listImages = [];
-  Activite _activite;
+  Activite activite;
 
   @override
   void initState() {
     super.initState();
-    userRepository = UserRepository();
-    _activite = Activite();
+    activite = Activite();
   }
 
   @override
   Widget build(BuildContext context) {
-    Activite activite = ModalRoute.of(context).settings.arguments;
-    _activite = activite;
-    print("Act ${activite.id} image size ->${_activite.images.length}");
+    activite = ModalRoute.of(context).settings.arguments;
+    print("Act ${activite.id} image size ->${activite.images.length}");
     return Scaffold(
       appBar: AppBar(
-        title: Text("${_activite.titre}"),
+        title: Text("${activite.titre}"),
         actions: <Widget>[],
       ),
       body: SingleChildScrollView(
@@ -44,9 +41,9 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
             margin: EdgeInsets.only(top: 10.0),
             height: 200.0,
             child: Container(
-              child: _activite.images.length > 0
+              child: activite.images.length > 0
                   ? ListView.builder(
-                      itemCount: _activite.images.length,
+                      itemCount: activite.images.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (BuildContext context, int index) {
                         return Container(
@@ -60,9 +57,9 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                                   image:
                                       File(activite.images[index].local_image)
                                               .existsSync()
-                                          ? FileImage(File(_activite
+                                          ? FileImage(File(activite
                                               .images[index].local_image))
-                                          : NetworkImage(_activite
+                                          : NetworkImage(activite
                                               .images[index].remote_image))),
                         );
                       },
@@ -90,8 +87,8 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                 Icons.supervisor_account,
                 size: 35.0,
               ),
-              title: Text("${_activite.creerPar.lastName}"),
-              subtitle: Text("${_activite.creerPar.username}"),
+              title: Text("${activite.creerPar.lastName}"),
+              subtitle: Text("${activite.creerPar.username}"),
             ),
           ),
           Divider(),
@@ -101,8 +98,8 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                 Icons.timer,
                 size: 35.0,
               ),
-              title: Text("Du ${_activite.dateDebut}"),
-              subtitle: Text("Au ${_activite.dateFin}"),
+              title: Text("Du ${activite.dateDebut}"),
+              subtitle: Text("Au ${activite.dateFin}"),
             ),
           ),
           Divider(),
@@ -112,7 +109,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                 Icons.description,
                 size: 35.0,
               ),
-              title: Text("${_activite.description}"),
+              title: Text("${activite.description}"),
             ),
           ),
           Divider(),
@@ -122,7 +119,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                 Icons.flag,
                 size: 35.0,
               ),
-              title: Text("${_activite.statutAct}"),
+              title: Text("${activite.statutAct}"),
             ),
           ),
           Divider(),
@@ -130,16 +127,16 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
       )),
       floatingActionButton: FloatingActionButton(
         heroTag: "status",
-        child: _activite.statutAct == "Achevé"
+        child: activite.statutAct == "Achevé"
             ? Icon(Icons.check)
             : Icon(Icons.sync),
         onPressed: () {
-          if (_activite.statutAct == "En cours" ||
-              _activite.statutAct == "Création") {
+          if (activite.statutAct == "En cours" ||
+              activite.statutAct == "Création") {
             getImage();
           } else {
             setState(() {
-              toggleStatus(_activite);
+              toggleStatus(activite);
             });
           }
         },
@@ -154,31 +151,41 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
     setState(() {
       _image = image;
     });
+
     if (_image != null) {
       if (_image.existsSync()) {
         ImageFile imageFile = ImageFile();
         imageFile.local_image = _image.path;
         _listImages.add(_image);
-        _activite.images.add(imageFile);
+        activite.images.add(imageFile);
       }
     }
 
     if (_listImages.length > 0) {
       setState(() {
-        toggleStatus(_activite);
+        toggleStatus(activite);
       });
 
       toSend.Activite send = toSend.Activite(
-          id: _activite.id,
-          images: _activite.images,
-          dateDebut: _activite.dateDebut,
-          creerPar: _activite.creerPar,
-          dateCreation: _activite.dateCreation,
-          dateFin: _activite.dateFin,
-          description: _activite.description,
-          statutAct: _activite.statutAct,
-          titre: _activite.titre);
-      Provider.of<DataRepository>(context).updateActivite(send);
+          id: activite.id,
+          images: activite.images,
+          dateDebut: activite.dateDebut,
+          creerPar: activite.creerPar,
+          dateCreation: activite.dateCreation,
+          dateFin: activite.dateFin,
+          description: activite.description,
+          statutAct: activite.statutAct,
+          titre: activite.titre);
+
+      bool updated = await Provider.of<DataRepository>(context).updateActivite(send);
+      if (updated) {
+        Provider.of<DataRepository>(context).uncompleted.map((n) {
+          if (n.id == activite.id) {
+            n.statutAct = activite.statutAct;
+          }
+        });
+        toggleStatus(activite);
+      }
     }
   }
 

@@ -113,7 +113,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         child: Text(
                           "Voir tout..",
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+
+                        },
                       )
                     ],
                   ),
@@ -213,9 +215,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             heroTag: "alt",
                             backgroundColor: Colors.white,
                             onPressed: () {
-                              for(Activite a in data){
-                                  print("On pressed  ${a.id}-> ${a.images.length}");
-                              }
                               Navigator.pushNamed(context, '/activity-detail',
                                   arguments: data.last);
                             },
@@ -358,6 +357,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           FlatButton(
                             child: Text("Voir tout..."),
                             onPressed: () {
+                              Navigator.pushNamed(context, '/activity-page',arguments: data.activities);
                             },
                           ),
                         ],
