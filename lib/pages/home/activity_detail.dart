@@ -29,7 +29,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
     print("Act ${activite.id} image size ->${activite.images.length}");
     return Scaffold(
       appBar: AppBar(
-        title: Text("${activite.titre} ${activite.statutAct}"),
+        title: Text("${activite.titre}"),
         actions: <Widget>[],
       ),
       body: SingleChildScrollView(
@@ -61,18 +61,52 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                       );
                     },
                   )
-                      : Center(
-                      child: Column(
-                        children: <Widget>[
-                          Icon(
-                            Icons.note,
-                            size: 50.0,
-                          ),
-                          Text("No Pictures")
-                        ],
-                      )),
+                      : Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Center(
+                        child: Column(
+                          children: <Widget>[
+                            Icon(
+                              Icons.note,
+                              size: 50.0,
+                            ),
+                            Text("No Pictures")
+                          ],
+                        )),
+                  ),
                 ),
-              )
+              ),
+              Divider(),
+              Container(
+                child:ListTile(
+                  leading: Icon(Icons.supervisor_account,size: 35.0,),
+                  title: Text("${activite.creerPar.lastName}"),
+                  subtitle: Text("${activite.creerPar.username}"),
+                ),
+              ),
+              Divider(),
+              Container(
+                child:ListTile(
+                  leading: Icon(Icons.timer,size: 35.0,),
+                  title: Text("${activite.dateDebut}"),
+                  subtitle: Text("${activite.dateFin}"),
+                ),
+              ),
+              Divider(),
+              Container(
+                child:ListTile(
+                  leading: Icon(Icons.description,size: 35.0,),
+                  title: Text("${activite.description}"),
+                ),
+              ),
+              Divider(),
+              Container(
+                child:ListTile(
+                  leading: Icon(Icons.flag,size: 35.0,),
+                  title: Text("${activite.statutAct}"),
+                ),
+              ),
+              Divider(),
             ],
           )
       ),

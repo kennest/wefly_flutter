@@ -28,6 +28,9 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<DataRepository>.value(
             value: DataRepository(),
           ),
+          ProxyProvider<DataRepository,UserRepository>(
+            builder: (context,data,user)=>UserRepository(),
+          )
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

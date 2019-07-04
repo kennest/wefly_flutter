@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
                 //Graph dernieres activites
-                lastActivity(data.completed),
+                lastActivity(data.uncompleted),
                 SizedBox(
                   height: 8.0,
                 ),
