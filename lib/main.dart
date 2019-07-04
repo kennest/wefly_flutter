@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:weflyapps/repositories/data_repository.dart';
 import 'package:weflyapps/repositories/user_repository.dart';
 import 'package:weflyapps/services/auth_service.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:weflyapps/services/services.dart';
 
 void main() {
@@ -19,9 +18,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          StreamProvider<ConnectionStatus>.value(
-            value: ConnectivityService().connectivityController.stream,
-          ),
           ChangeNotifierProvider<UserRepository>.value(
             value: UserRepository(),
           ),

@@ -153,6 +153,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
+  //Print last activity details
   lastActivity(List<Activite> data) {
       return data.length > 0? Container(
           margin: EdgeInsets.all(8.0),
@@ -325,7 +326,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         margin: EdgeInsets.all(5.0),
         height: 140.0,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0), color: Colors.white),
+            borderRadius: BorderRadius.circular(8.0), color: Colors.green.withAlpha(1)),
         child: Wrap(
           children: <Widget>[
             Row(

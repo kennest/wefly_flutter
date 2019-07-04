@@ -5,13 +5,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weflyapps/repositories/user_repository.dart';
 import 'package:weflyapps/services/data_service.dart';
 import 'package:weflyapps/models/models.dart';
+import 'package:weflyapps/models/send/activite.dart' as send;
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
 enum Status { Uninitialized, loading, loaded, error }
 
 class DataRepository with ChangeNotifier {
-
   DataService dataService = DataService();
 
   List<ReceivedAlert> _received = List();
@@ -25,7 +25,6 @@ class DataRepository with ChangeNotifier {
   double _percent = 0.0;
 
   Status _status = Status.Uninitialized;
-
 
   Status get status => _status;
 
@@ -58,7 +57,7 @@ class DataRepository with ChangeNotifier {
       doDownload(a.alerte.properties.categorie.remote_icone);
       Uri uri = Uri.parse(a.alerte.properties.categorie.remote_icone);
       a.alerte.properties.categorie.local_icone =
-      "${dir.path}${uri.pathSegments.last}";
+          "${dir.path}${uri.pathSegments.last}";
     }
 
     print('Received 0-> + ${json.encode(_received.toList())}');
@@ -83,7 +82,7 @@ class DataRepository with ChangeNotifier {
     }).toList();
 
     _uncompleted = _activities.where((a) {
-      return (a.statutAct == "Création" || a.statutAct=="En cours");
+      return (a.statutAct == "Création" || a.statutAct == "En cours");
     }).toList();
 
     computePercent();
@@ -96,6 +95,10 @@ class DataRepository with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateActivite(send.Activite a) async {
+    await dataService.updateActivite(a);
+  }
+
   //Compute the percent of activities completed
   computePercent() {
     _percent = (_completed.length * 100) / _activities.length;
@@ -104,20 +107,18 @@ class DataRepository with ChangeNotifier {
     notifyListeners();
   }
 
-  startDownloadActiviteFile(List<Activite> list)async{
+  startDownloadActiviteFile(List<Activite> list) async {
     Directory dir = await getApplicationDocumentsDirectory();
     for (Activite a in list) {
       print("Act 0 ${a.id} image size-> ${a.images.length}");
       for (ImageFile p in a.images) {
-          doDownload("https://wa.weflysoftware.com/media/${p.remote_image}");
-          Uri uri = Uri.parse(p.remote_image);
-          p.local_image = "${dir.path}${uri.pathSegments.last}";
-
+        doDownload("https://wa.weflysoftware.com/media/${p.remote_image}");
+        Uri uri = Uri.parse(p.remote_image);
+        p.local_image = "${dir.path}${uri.pathSegments.last}";
       }
       print("Act N ${a.id} image size-> ${a.images.length}");
     }
   }
-
 
   Future<void> doDownload(String url) async {
     bool isConnected = await hasInternet();
