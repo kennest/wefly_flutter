@@ -27,31 +27,36 @@ class _ActivityPageState extends State<ActivityPage> {
         title: Text("Vous avez ${activities.length} Activités"),
         actions: <Widget>[],
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: MediaQuery.of(context).size.height,
-              child: ListView.builder(
-                itemCount: activities.length,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    leading: Image.file(
-                        File(activities[index].images[0].local_image)),
-                    title: Text("${activities[index].titre}"),
-                    subtitle: Text("${activities[index].description}"),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/activity-detail',
-                          arguments: activities[index]);
+      body:CustomScrollView(
+        slivers: <Widget>[
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                Container(
+
+                  height: MediaQuery.of(context).size.height-50.0,
+                  child: ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: activities.length,
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        leading: Image.file(
+                            File(activities[index].images[0].local_image)),
+                        title: Text(activities[index].titre.length>11?"${activities[index].titre.substring(0, 12)}...":"${activities[index].titre}"),
+                        subtitle: Text(activities[index].description.length>19?"${activities[index].description.substring(0, 20)}...":"${activities[index].description}"),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/activity-detail',
+                              arguments: activities[index]);
+                        },
+                      );
                     },
-                  );
-                },
-              ),
-            )
-          ],
-        ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
