@@ -5,7 +5,7 @@ class ImageFile {
   int statutId;
   String dateCreation;
 
-  ImageFile({this.remote_image, this.id, this.statutId, this.dateCreation,this.local_image});
+  ImageFile({this.remote_image, this.id, this.statutId, this.dateCreation});
 
   ImageFile.fromJson(Map<String, dynamic> json) {
     remote_image = json['image'];

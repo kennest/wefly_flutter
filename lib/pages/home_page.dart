@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:ui' as prefix1;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:synchronized/synchronized.dart';
 import 'package:weflyapps/models/models.dart';
 import 'package:weflyapps/repositories/data_repository.dart';
 import 'package:weflyapps/repositories/data_repository.dart' as prefix0;
@@ -26,61 +28,61 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     userRepository = UserRepository();
-    dataRepository = DataRepository(userRepository);
+    dataRepository = DataRepository();
     getData();
   }
 
   getData() async {
-    await dataRepository.fetchReceivedAlerts();
-    await dataRepository.fetchActivities();
+      await dataRepository.fetchReceivedAlerts();
+      await dataRepository.fetchActivities();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      builder: (_) => dataRepository,
-      child: Consumer(builder: (context, DataRepository data, _) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text("Wefly"),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.close),
-                onPressed: () {
-                  Provider.of<UserRepository>(context).doLogout();
-                },
-              )
-            ],
-          ),
-          drawer: Drawer(
-              elevation: 5.0,
-              child: Scaffold(
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 25.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        ListTile(
-                          title: Text("Profile"),
-                          onTap: () {},
-                        ),
-                        ListTile(
-                          title: Text("Parametres"),
-                          onTap: () {},
-                        ),
-                        ListTile(
-                          title: Text("Quitter"),
-                          onTap: () {
-                            SystemNavigator.pop();
-                          },
-                        )
-                      ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Wefly"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Provider.of<UserRepository>(context).doLogout();
+            },
+          )
+        ],
+      ),
+      drawer: Drawer(
+          elevation: 5.0,
+          child: Scaffold(
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(top: 25.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ListTile(
+                      title: Text("Profile"),
+                      onTap: () {},
                     ),
-                  ),
+                    ListTile(
+                      title: Text("Parametres"),
+                      onTap: () {},
+                    ),
+                    ListTile(
+                      title: Text("Quitter"),
+                      onTap: () {
+                        SystemNavigator.pop();
+                      },
+                    )
+                  ],
                 ),
-              )),
-          body: SingleChildScrollView(
+              ),
+            ),
+          )),
+      body: ChangeNotifierProvider<DataRepository>.value(
+        value: dataRepository,
+        child: Consumer(builder: (context, DataRepository data, child) {
+          return SingleChildScrollView(
             child: Column(
               children: <Widget>[
                 Padding(
@@ -91,7 +93,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
                 //Graph dernieres activites
-                lastActivity(data),
+                lastActivity(data.completed),
                 SizedBox(
                   height: 8.0,
                 ),
@@ -120,40 +122,39 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 alertListView(data.received)
               ],
             ),
-          ),
-          bottomNavigationBar: Row(
-            children: <Widget>[
-              IconButton(
-                color: Colors.green[800],
-                icon: Icon(Icons.home),
-                onPressed: () {},
-              ),
-              IconButton(
-                color: Colors.green[500],
-                icon: Icon(Icons.send),
-                onPressed: () {},
-              ),
-              IconButton(
-                color: Colors.green[500],
-                icon: Icon(Icons.receipt),
-                onPressed: () {},
-              ),
-            ],
-          ),
-          floatingActionButton: FloatingActionButton(
-            heroTag: "new",
-            backgroundColor: Colors.green[800],
-            child: Icon(Icons.add),
+          );
+        }),
+      ),
+      bottomNavigationBar: Row(
+        children: <Widget>[
+          IconButton(
+            color: Colors.green[800],
+            icon: Icon(Icons.home),
             onPressed: () {},
           ),
-        );
-      }),
+          IconButton(
+            color: Colors.green[500],
+            icon: Icon(Icons.send),
+            onPressed: () {},
+          ),
+          IconButton(
+            color: Colors.green[500],
+            icon: Icon(Icons.receipt),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: "new",
+        backgroundColor: Colors.green[800],
+        child: Icon(Icons.add),
+        onPressed: () {},
+      ),
     );
   }
 
-  lastActivity(DataRepository data) {
-    if (data.uncompleted.length > 0) {
-      return Container(
+  lastActivity(List<Activite> data) {
+      return data.length > 0? Container(
           margin: EdgeInsets.all(8.0),
           height: 170.0,
           decoration: BoxDecoration(
@@ -181,7 +182,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Text(
-                                    "${data.uncompleted.last.titre.substring(0, 12)}",
+                                    data.last.titre.length>11?"${data.last.titre.substring(0, 12)}":"${data.last.titre}",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 20.0,
@@ -192,14 +193,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           Padding(
                             padding: EdgeInsets.fromLTRB(0.0, 25.0, 65.0, 0.0),
                             child: Text(
-                              "${data.uncompleted.last.description.substring(0, 12)}",
+                              "${data.last.description.substring(0, 12)}",
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
                           Padding(
                             padding: EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 0.0),
                             child: Text(
-                              "Du ${data.uncompleted.last.dateDebut} au ${data.uncompleted.last.dateFin}",
+                              "Du ${data.last.dateDebut} au ${data.last.dateFin}",
                               style: TextStyle(color: Colors.white),
                             ),
                           )
@@ -211,7 +212,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             heroTag: "alt",
                             backgroundColor: Colors.white,
                             onPressed: () {
-                              Navigator.pushNamed(context, '/activity-detail',arguments: data.uncompleted.last);
+                              for(Activite a in data){
+                                  print("On pressed  ${a.id}-> ${a.images.length}");
+                              }
+                              Navigator.pushNamed(context, '/activity-detail',
+                                  arguments: data.last);
                             },
                             child: Icon(
                               Icons.build,
@@ -221,15 +226,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ],
                   ),
                 ],
-              )));
-    } else {
-      return CircularProgressIndicator();
-    }
+              ))):
+     CircularProgressIndicator();
   }
 
   //received alerts listview
   alertListView(List<ReceivedAlert> received) {
-    print('Started Build->');
     return received.length == 0
         ? CircularProgressIndicator()
         : Container(
@@ -246,6 +248,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 print('Ext 0-> $ext');
                 if (ext == ".jpg" || ext == ".png" || ext == ".jpeg") {
                   print('Ext 1-> $ext');
+
                   return Container(
                     margin: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
                     height: 200.0,
@@ -353,7 +356,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                           FlatButton(
                             child: Text("Voir tout..."),
-                            onPressed: () {},
+                            onPressed: () {
+                            },
                           ),
                         ],
                       ),

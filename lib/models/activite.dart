@@ -1,6 +1,6 @@
 import 'models.dart';
 class Activite {
-	List<ImageFile> image;
+	List<ImageFile> images;
 	String titre;
 	String dateDebut;
 	String description;
@@ -10,11 +10,11 @@ class Activite {
 	String statutAct;
 	String dateCreation;
 
-	Activite({this.image, this.titre, this.dateDebut, this.description, this.creerPar, this.dateFin, this.id, this.statutAct, this.dateCreation});
+	Activite({this.images, this.titre, this.dateDebut, this.description, this.creerPar, this.dateFin, this.id, this.statutAct, this.dateCreation});
 
 	Activite.fromJson(Map<String, dynamic> json) {
 		if (json['image'] != null) {
-			image = new List<ImageFile>();(json['image'] as List).forEach((v) { image.add(new ImageFile.fromJson(v)); });
+			images = new List<ImageFile>();(json['image'] as List).forEach((v) { images.add(new ImageFile.fromJson(v)); });
 		}
 		titre = json['titre'];
 		dateDebut = json['date_debut'];
@@ -29,8 +29,8 @@ class Activite {
 
 	Map<String, dynamic> toJson() {
 		final Map<String, dynamic> data = new Map<String, dynamic>();
-		if (this.image != null) {
-      data['image'] =  this.image.map((v) => v.toJson()).toList();
+		if (this.images != null) {
+      data['image'] =  this.images.map((v) => v.toJson()).toList();
     }
 		data['titre'] = this.titre;
 		data['date_debut'] = this.dateDebut;

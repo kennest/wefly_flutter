@@ -6,10 +6,11 @@ import 'package:weflyapps/models/models.dart';
 import 'package:weflyapps/models/received_alert.dart';
 import 'dart:convert';
 
-
 class DataService {
-  var sent_alert_url = "https://wa.weflysoftware.com/communications/api/alertes/";
-  var get_employee_url = "https://wa.weflysoftware.com/communications/api/liste-employes/";
+  var sent_alert_url =
+      "https://wa.weflysoftware.com/communications/api/alertes/";
+  var get_employee_url =
+      "https://wa.weflysoftware.com/communications/api/liste-employes/";
   var received_alert_url =
       "https://wa.weflysoftware.com/communications/api/alerte-receive-status/";
   var send_pieces_url =
@@ -52,10 +53,10 @@ class DataService {
       response = await http.get(received_alert_url,
           headers: {HttpHeaders.authorizationHeader: token});
       if (response != null) {
-        print(response.body);
         var next = json.decode(utf8.decode(response.bodyBytes))['next'];
-        var results = json.decode(utf8.decode(response.bodyBytes))['results'] as List;
-        results.forEach((i) async{
+        var results =
+            json.decode(utf8.decode(response.bodyBytes))['results'] as List;
+        results.forEach((i) async {
           ReceivedAlert a = ReceivedAlert.fromJson(i);
           received.add(a);
         });
@@ -69,7 +70,7 @@ class DataService {
       print('Received 1->' + json.decode(data).toString());
       if (data != null) {
         var results = json.decode(data) as List;
-        results.forEach((i) async{
+        results.forEach((i) async {
           ReceivedAlert a = ReceivedAlert.fromJson(i);
           received.add(a);
         });
@@ -91,10 +92,10 @@ class DataService {
       response = await http.get(get_activites_url,
           headers: {HttpHeaders.authorizationHeader: token});
       if (response != null) {
-        print(response.body);
         var next = json.decode(utf8.decode(response.bodyBytes))['next'];
-        var results = json.decode(utf8.decode(response.bodyBytes))['results'] as List;
-        results.forEach((i) async{
+        var results =
+            json.decode(utf8.decode(response.bodyBytes))['results'] as List;
+        results.forEach((i) async {
           Activite a = Activite.fromJson(i);
           activities.add(a);
         });
@@ -108,7 +109,7 @@ class DataService {
       print('Activities 1->' + json.decode(data).toString());
       if (data != null) {
         var results = json.decode(data) as List;
-        results.forEach((i) async{
+        results.forEach((i) async {
           Activite a = Activite.fromJson(i);
           activities.add(a);
         });
@@ -118,5 +119,4 @@ class DataService {
     }
     return activities;
   }
-
 }

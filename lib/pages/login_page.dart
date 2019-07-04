@@ -22,6 +22,8 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     userRepository = UserRepository();
     _checkToken();
+    userCtrl.text="kenyoulai@gmail.com";
+    passCtrl.text="admin12345";
   }
 
   _checkToken()async{
@@ -34,9 +36,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      builder: (_) => userRepository,
-      child: Consumer(builder: (context, UserRepository user, _) {
+    return ChangeNotifierProvider<UserRepository>.value(
+      value: userRepository,
+      child: Consumer(builder: (context, UserRepository user, child) {
         switch (user.status) {
           case Status.Uninitialized:
             return body();
@@ -83,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     TextFormField(
                       controller: passCtrl,
-                      decoration: InputDecoration(labelText: "password"),
+                      decoration: InputDecoration(labelText: "password",),
                       obscureText: true,
                     ),
                     RaisedButton(
@@ -103,6 +105,6 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    Provider.of<UserRepository>(context).dispose();
+    //Provider.of<UserRepository>(context).dispose();
   }
 }

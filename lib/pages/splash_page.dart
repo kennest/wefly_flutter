@@ -11,13 +11,13 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 2));
     _getPermissions();
     _checkToken();
     //Isolate.spawn(_checkToken(), "message");
   }
 
   _getPermissions()async{
+    await Future.delayed(Duration(seconds: 2));
     await PermissionHandler().requestPermissions([PermissionGroup.storage,PermissionGroup.microphone,PermissionGroup.location,PermissionGroup.camera]);
   }
 
