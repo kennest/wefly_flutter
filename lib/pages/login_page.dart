@@ -36,9 +36,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<UserRepository>.value(
+    return ListenableProvider<UserRepository>.value(
       value: userRepository,
-      child: Consumer(builder: (context, UserRepository user, child) {
+      child: Consumer<UserRepository>(builder: (context, user, child) {
         switch (user.status) {
           case Status.Uninitialized:
             return body();

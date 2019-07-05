@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'package:synchronized/synchronized.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:weflyapps/repositories/user_repository.dart';
 import 'package:weflyapps/services/data_service.dart';
 import 'package:weflyapps/models/models.dart';
 import 'package:weflyapps/models/send/activite.dart' as send;

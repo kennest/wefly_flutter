@@ -15,19 +15,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider<UserRepository>.value(
-            value: UserRepository(),
-          ),
-          ChangeNotifierProvider<DataRepository>.value(
-            value: DataRepository(),
-          ),
-          ProxyProvider<DataRepository,UserRepository>(
-            builder: (context,data,user)=>UserRepository(),
-          )
-        ],
-        child: MaterialApp(
+    return  MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
               primarySwatch: Colors.primaries[9],
@@ -52,6 +40,6 @@ class MyApp extends StatelessWidget {
             '/activity-detail': (context) => ActivityDetailPage(),
             '/activity-page': (context) => ActivityPage(),
           },
-        ));
+        );
   }
 }
