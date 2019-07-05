@@ -15,19 +15,22 @@ class ActivityDetailPage extends StatefulWidget {
 }
 
 class _ActivityDetailPageState extends State<ActivityDetailPage> {
-   File _image;
+  File _image;
   List<File> _listImages = [];
   Activite activite;
+  Activite _activite;
 
   @override
   void initState() {
     super.initState();
     activite = Activite();
+    _activite = Activite();
   }
 
   @override
   Widget build(BuildContext context) {
     activite = ModalRoute.of(context).settings.arguments;
+    _activite=activite;
     print("Act ${activite.id} image size ->${activite.images.length}");
     return Scaffold(
       appBar: AppBar(
@@ -135,9 +138,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
               activite.statutAct == "Création") {
             getImage();
           } else {
-            setState(() {
-              toggleStatus(activite);
-            });
+            sendData();
           }
         },
       ),
@@ -158,42 +159,53 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
         imageFile.local_image = _image.path;
         _listImages.add(_image);
         activite.images.add(imageFile);
+        _activite.images.clear();
+        _activite.images.add(imageFile);
       }
     }
 
     if (_listImages.length > 0) {
-      setState(() {
-        toggleStatus(activite);
-      });
-
-      toSend.Activite send = toSend.Activite(
-          id: activite.id,
-          images: activite.images,
-          dateDebut: activite.dateDebut,
-          creerPar: activite.creerPar,
-          dateCreation: activite.dateCreation,
-          dateFin: activite.dateFin,
-          description: activite.description,
-          statutAct: activite.statutAct,
-          titre: activite.titre);
-
-      bool updated = await Provider.of<DataRepository>(context).updateActivite(send);
-      if (updated) {
-        Provider.of<DataRepository>(context).uncompleted.map((n) {
-          if (n.id == activite.id) {
-            n.statutAct = activite.statutAct;
-          }
-        });
-        toggleStatus(activite);
-      }
+      sendData();
     }
   }
 
-  toggleStatus(Activite a) {
-    if (a.statutAct == "En cours" || a.statutAct == "Création") {
-      a.statutAct = "Achevé";
+  sendData() async {
+
+    setState(() {
+      toggleStatus();
+    });
+
+    toSend.Activite send = toSend.Activite(
+        id: _activite.id,
+        images: _activite.images,
+        dateDebut: _activite.dateDebut,
+        creerPar: _activite.creerPar,
+        dateCreation: _activite.dateCreation,
+        dateFin: _activite.dateFin,
+        description: _activite.description,
+        statutAct: _activite.statutAct,
+        titre: _activite.titre);
+
+    bool updated =
+        await Provider.of<DataRepository>(context).updateActivite(send);
+    if (updated) {
+      Provider.of<DataRepository>(context).uncompleted.map((n) {
+        if (n.id == activite.id) {
+          n.statutAct = activite.statutAct;
+        }
+      });
+
+
+    }
+  }
+
+  toggleStatus() {
+    if (activite.statutAct == "En cours" || activite.statutAct == "Création") {
+      activite.statutAct = "Achevé";
+      _activite.statutAct = "Achevé";
     } else {
-      a.statutAct = "En cours";
+      activite.statutAct = "En cours";
+      _activite.statutAct = "En cours";
     }
   }
 }

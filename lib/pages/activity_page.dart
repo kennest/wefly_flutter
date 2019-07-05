@@ -33,9 +33,9 @@ class _ActivityPageState extends State<ActivityPage> {
             delegate: SliverChildListDelegate(
               [
                 Container(
-
-                  height: MediaQuery.of(context).size.height-50.0,
+                  height: MediaQuery.of(context).size.height,
                   child: ListView.builder(
+                    shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: activities.length,
                     scrollDirection: Axis.vertical,
