@@ -39,123 +39,124 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return  Consumer<UserRepository>(
-        builder: (context, user, child) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text("Wefly"),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.close),
-                  onPressed: () {
-                    user.doLogout();
-                  },
-                )
-              ],
-            ),
-            drawer: Drawer(
-                elevation: 5.0,
-                child: Scaffold(
-                  body: SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 25.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+    return Provider<UserRepository>.value(value: userRepository,child: Consumer<UserRepository>(
+      builder: (context, user, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Wefly"),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  user.doLogout();
+                },
+              )
+            ],
+          ),
+          drawer: Drawer(
+              elevation: 5.0,
+              child: Scaffold(
+                body: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 25.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        ListTile(
+                          title: Text("Profile"),
+                          onTap: () {},
+                        ),
+                        ListTile(
+                          title: Text("Parametres"),
+                          onTap: () {},
+                        ),
+                        ListTile(
+                          title: Text("Quitter"),
+                          onTap: () {
+                            SystemNavigator.pop();
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )),
+          body: ListenableProvider<DataRepository>.value(
+            value: dataRepository,
+            child: Consumer<DataRepository>(builder: (context, data, child) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
+                      child: Text(
+                        "Bonjour Oulai Kennest.",
+                        style: TextStyle(
+                            color: Colors.green[800], fontSize: 30.0),
+                      ),
+                    ),
+                    //Graph dernieres activites
+                    lastActivity(data.uncompleted),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    //Graph activites accomplis
+                    activitiesListView(data),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 15.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          ListTile(
-                            title: Text("Profile"),
-                            onTap: () {},
+                          Text(
+                            "Vos alertes récentes",
+                            style: TextStyle(
+                                color: Colors.green[800], fontSize: 18.0),
                           ),
-                          ListTile(
-                            title: Text("Parametres"),
-                            onTap: () {},
-                          ),
-                          ListTile(
-                            title: Text("Quitter"),
-                            onTap: () {
-                              SystemNavigator.pop();
-                            },
+                          MaterialButton(
+                            child: Text(
+                              "Voir tout..",
+                            ),
+                            onPressed: () {},
                           )
                         ],
                       ),
                     ),
-                  ),
-                )),
-            body: ListenableProvider<DataRepository>.value(
-              value: dataRepository,
-              child: Consumer<DataRepository>(builder: (context, data, child) {
-                return SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
-                        child: Text(
-                          "Bonjour Oulai Kennest.",
-                          style: TextStyle(
-                              color: Colors.green[800], fontSize: 30.0),
-                        ),
-                      ),
-                      //Graph dernieres activites
-                      lastActivity(data.uncompleted),
-                      SizedBox(
-                        height: 8.0,
-                      ),
-                      //Graph activites accomplis
-                      activitiesListView(data),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Vos alertes récentes",
-                              style: TextStyle(
-                                  color: Colors.green[800], fontSize: 18.0),
-                            ),
-                            MaterialButton(
-                              child: Text(
-                                "Voir tout..",
-                              ),
-                              onPressed: () {},
-                            )
-                          ],
-                        ),
-                      ),
-                      //Alertes recentes listview
-                      alertListView(data.received)
-                    ],
-                  ),
-                );
-              }),
-            ),
-            bottomNavigationBar: Row(
-              children: <Widget>[
-                IconButton(
-                  color: Colors.green[800],
-                  icon: Icon(Icons.home),
-                  onPressed: () {},
+                    //Alertes recentes listview
+                    alertListView(data.received)
+                  ],
                 ),
-                IconButton(
-                  color: Colors.green[500],
-                  icon: Icon(Icons.send),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  color: Colors.green[500],
-                  icon: Icon(Icons.receipt),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-            floatingActionButton: FloatingActionButton(
-              heroTag: "new",
-              backgroundColor: Colors.green[800],
-              child: Icon(Icons.add),
-              onPressed: () {},
-            ),
-          );
-        },
-      );
+              );
+            }),
+          ),
+          bottomNavigationBar: Row(
+            children: <Widget>[
+              IconButton(
+                color: Colors.green[800],
+                icon: Icon(Icons.home),
+                onPressed: () {},
+              ),
+              IconButton(
+                color: Colors.green[500],
+                icon: Icon(Icons.send),
+                onPressed: () {},
+              ),
+              IconButton(
+                color: Colors.green[500],
+                icon: Icon(Icons.receipt),
+                onPressed: () {},
+              ),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            heroTag: "new",
+            backgroundColor: Colors.green[800],
+            child: Icon(Icons.add),
+            onPressed: () {},
+          ),
+        );
+      },
+    ));
+
   }
 
   //Print last activity details

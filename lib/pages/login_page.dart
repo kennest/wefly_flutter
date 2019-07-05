@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                           Colors.black.withOpacity(0.5), BlendMode.srcATop),
                       fit: BoxFit.cover)),
               child: Container(
-                margin: EdgeInsets.fromLTRB(20.0, 200.0, 20.0, 200.0),
+                margin: EdgeInsets.fromLTRB(20.0, 200.0, 20.0, 250.0),
                 padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
                 color: Colors.white.withOpacity(0.95),
                 child: Column(
