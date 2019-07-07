@@ -7,12 +7,12 @@ enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 class UserRepository with ChangeNotifier {
   var authService = AuthService();
   User _user;
-
   Status _status = Status.Uninitialized;
 
   User get user => _user;
-
   Status get status => _status;
+
+  UserRepository.instance();
 
   void doLogin(Credential c) async {
     _status=Status.Authenticating;

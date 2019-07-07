@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weflyapps/database/alerts_received_dao.dart';
+import 'package:weflyapps/database/app_database.dart';
 import 'package:weflyapps/services/data_service.dart';
 import 'package:weflyapps/models/models.dart';
 import 'package:weflyapps/models/send/activite.dart' as send;
@@ -11,6 +13,8 @@ enum Status { Uninitialized, loading, loaded, error }
 
 class DataRepository with ChangeNotifier {
   DataService dataService = DataService();
+
+  AlertReceivedDao _alertReceivedDao=AlertReceivedDao();
 
   List<ReceivedAlert> _received = List();
 
@@ -36,6 +40,8 @@ class DataRepository with ChangeNotifier {
 
   double get percent => _percent;
 
+  DataRepository.instance();
+
   //Fetch all received alerts
   Future<void> fetchReceivedAlerts() async {
     _status = Status.loading;
@@ -57,6 +63,10 @@ class DataRepository with ChangeNotifier {
       a.alerte.properties.categorie.local_icone =
           "${dir.path}${uri.pathSegments.last}";
     }
+
+    _received.forEach((f){
+      _alertReceivedDao.insert(f);
+    });
 
     print('Received 0-> + ${json.encode(_received.toList())}');
     prefs.setString("received", json.encode(_received.toList()));

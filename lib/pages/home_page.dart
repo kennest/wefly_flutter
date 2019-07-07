@@ -1,15 +1,12 @@
 import 'dart:io';
-import 'dart:ui' as prefix1;
-
+import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:synchronized/synchronized.dart';
 import 'package:weflyapps/models/models.dart';
-import 'package:weflyapps/repositories/data_repository.dart';
+import 'package:weflyapps/pages/login_page.dart';
 import 'package:weflyapps/repositories/data_repository.dart' as prefix0;
 import 'package:weflyapps/repositories/user_repository.dart';
-import 'package:weflyapps/services/data_service.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:path/path.dart' as p;
 
@@ -19,18 +16,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  DataRepository dataRepository;
+  prefix0.DataRepository dataRepository;
   UserRepository userRepository;
-  var currentIndex = 0;
-  DataService dataService;
 
   @override
   void initState() {
     super.initState();
-    userRepository = UserRepository();
-    dataRepository = DataRepository();
+    userRepository = UserRepository.instance();
+    dataRepository = prefix0.DataRepository.instance();
     getData();
+    initPlatformState();
   }
+
 
   getData() async {
     await dataRepository.fetchReceivedAlerts();
@@ -39,124 +36,134 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Provider<UserRepository>.value(value: userRepository,child: Consumer<UserRepository>(
-      builder: (context, user, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text("Wefly"),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.close),
-                onPressed: () {
-                  user.doLogout();
-                },
-              )
-            ],
-          ),
-          drawer: Drawer(
-              elevation: 5.0,
-              child: Scaffold(
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 25.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        ListTile(
-                          title: Text("Profile"),
-                          onTap: () {},
-                        ),
-                        ListTile(
-                          title: Text("Parametres"),
-                          onTap: () {},
-                        ),
-                        ListTile(
-                          title: Text("Quitter"),
-                          onTap: () {
-                            SystemNavigator.pop();
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              )),
-          body: ListenableProvider<DataRepository>.value(
-            value: dataRepository,
-            child: Consumer<DataRepository>(builder: (context, data, child) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
-                      child: Text(
-                        "Bonjour Oulai Kennest.",
-                        style: TextStyle(
-                            color: Colors.green[800], fontSize: 30.0),
-                      ),
-                    ),
-                    //Graph dernieres activites
-                    lastActivity(data.uncompleted),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    //Graph activites accomplis
-                    activitiesListView(data),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 15.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            "Vos alertes récentes",
-                            style: TextStyle(
-                                color: Colors.green[800], fontSize: 18.0),
-                          ),
-                          MaterialButton(
-                            child: Text(
-                              "Voir tout..",
-                            ),
-                            onPressed: () {},
-                          )
-                        ],
-                      ),
-                    ),
-                    //Alertes recentes listview
-                    alertListView(data.received)
+    return ListenableProvider<UserRepository>.value(
+        value: userRepository,
+        child: Consumer<UserRepository>(
+          builder: (context, user, child) {
+            switch (user.status) {
+              case Status.Uninitialized:
+              case Status.Authenticating:
+              case Status.Authenticated:
+                  return Scaffold(
+                appBar: AppBar(
+                  title: Text("Wefly"),
+                  actions: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () {
+                        user.doLogout();
+                      },
+                    )
                   ],
                 ),
+                drawer: Drawer(
+                    elevation: 5.0,
+                    child: Scaffold(
+                      body: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 25.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              ListTile(
+                                title: Text("Profile"),
+                                onTap: () {},
+                              ),
+                              ListTile(
+                                title: Text("Parametres"),
+                                onTap: () {},
+                              ),
+                              ListTile(
+                                title: Text("Quitter"),
+                                onTap: () {
+                                  SystemNavigator.pop();
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    )),
+                body: ListenableProvider<prefix0.DataRepository>.value(
+                  value: dataRepository,
+                  child:
+                  Consumer<prefix0.DataRepository>(builder: (context, data, child) {
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
+                            child: Text(
+                              "Bonjour Oulai Kennest.",
+                              style: TextStyle(
+                                  color: Colors.green[800], fontSize: 30.0),
+                            ),
+                          ),
+                          //Graph dernieres activites
+                          lastActivity(data.uncompleted),
+                          SizedBox(
+                            height: 8.0,
+                          ),
+                          //Graph activites accomplis
+                          activitiesListView(data),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  "Vos alertes récentes",
+                                  style: TextStyle(
+                                      color: Colors.green[800], fontSize: 18.0),
+                                ),
+                                MaterialButton(
+                                  child: Text(
+                                    "Voir tout..",
+                                  ),
+                                  onPressed: () {},
+                                )
+                              ],
+                            ),
+                          ),
+                          //Alertes recentes listview
+                          alertListView(data.received)
+                        ],
+                      ),
+                    );
+                  }),
+                ),
+                bottomNavigationBar: Row(
+                  children: <Widget>[
+                    IconButton(
+                      color: Colors.green[800],
+                      icon: Icon(Icons.home),
+                      onPressed: () {},
+                    ),
+                    IconButton(
+                      color: Colors.green[500],
+                      icon: Icon(Icons.send),
+                      onPressed: () {},
+                    ),
+                    IconButton(
+                      color: Colors.green[500],
+                      icon: Icon(Icons.receipt),
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+                floatingActionButton: FloatingActionButton(
+                  heroTag: "new",
+                  backgroundColor: Colors.green[800],
+                  child: Icon(Icons.add),
+                  onPressed: () {},
+                ),
               );
-            }),
-          ),
-          bottomNavigationBar: Row(
-            children: <Widget>[
-              IconButton(
-                color: Colors.green[800],
-                icon: Icon(Icons.home),
-                onPressed: () {},
-              ),
-              IconButton(
-                color: Colors.green[500],
-                icon: Icon(Icons.send),
-                onPressed: () {},
-              ),
-              IconButton(
-                color: Colors.green[500],
-                icon: Icon(Icons.receipt),
-                onPressed: () {},
-              ),
-            ],
-          ),
-          floatingActionButton: FloatingActionButton(
-            heroTag: "new",
-            backgroundColor: Colors.green[800],
-            child: Icon(Icons.add),
-            onPressed: () {},
-          ),
-        );
-      },
-    ));
+              case Status.Unauthenticated:
+                return LoginPage();
+            }
 
+          },
+        ));
   }
 
   //Print last activity details
@@ -331,7 +338,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   //Activities listview
-  activitiesListView(DataRepository data) {
+  activitiesListView(prefix0.DataRepository data) {
     return Container(
         margin: EdgeInsets.all(5.0),
         height: 140.0,
@@ -391,6 +398,35 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ],
         ));
+  }
+
+  //Init offline Task
+  Future<void> initPlatformState() async {
+    // Configure BackgroundFetch.
+    BackgroundFetch.configure(
+        BackgroundFetchConfig(
+            minimumFetchInterval: 1,
+            stopOnTerminate: false,
+            enableHeadless: true), () async {
+      // This is the fetch-event callback.
+      print('[BackgroundFetch] Event received');
+
+      // IMPORTANT:  You must signal completion of your fetch task or the OS can punish your app
+      // for taking too long in the background.
+      BackgroundFetch.finish();
+    }).then((int status) {
+      print('[BackgroundFetch] SUCCESS: $status');
+    }).catchError((e) {
+      print('[BackgroundFetch] ERROR: $e');
+    });
+
+    // Optionally query the current BackgroundFetch status.
+    int status = await BackgroundFetch.status;
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
   }
 
   @override

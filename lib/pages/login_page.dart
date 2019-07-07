@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    userRepository = UserRepository();
+    userRepository = UserRepository.instance();
     _checkToken();
     userCtrl.text="kenyoulai@gmail.com";
     passCtrl.text="admin12345";

@@ -30,7 +30,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
   @override
   Widget build(BuildContext context) {
     activite = ModalRoute.of(context).settings.arguments;
-    _activite=activite;
+    _activite = activite;
     print("Act ${activite.id} image size ->${activite.images.length}");
     return Scaffold(
       appBar: AppBar(
@@ -170,7 +170,6 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
   }
 
   sendData() async {
-
     setState(() {
       toggleStatus();
     });
@@ -194,8 +193,6 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
           n.statutAct = activite.statutAct;
         }
       });
-
-
     }
   }
 

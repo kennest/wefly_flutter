@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:weflyapps/pages/home/activity_detail.dart';
 import 'package:weflyapps/pages/pages.dart';
 import 'package:provider/provider.dart';
-import 'package:weflyapps/repositories/data_repository.dart';
-import 'package:weflyapps/repositories/user_repository.dart';
-
 
 void main() {
   Provider.debugCheckInvalidValueType = null;
   runApp(MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.

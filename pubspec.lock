@@ -35,7 +35,7 @@ packages:
       name: background_fetch
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.2"
+    version: "0.2.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -298,6 +298,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
+  sembast:
+    dependency: "direct main"
+    description:
+      name: sembast
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.16.0+3"
   shared_preferences:
     dependency: "direct main"
     description:
