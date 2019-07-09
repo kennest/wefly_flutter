@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     await dataRepository.fetchReceivedAlerts();
     await dataRepository.fetchActivities();
     await dataRepository.fetchCategories();
+    await dataRepository.getLocation();
   }
 
   @override
@@ -456,9 +457,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     leading: Image.file(File(list[index].local_icone)),
                     title: Text(list[index].nom),
                     onTap: () {
-                      prefix1.Alert a=prefix1.Alert();
-                      a.categoryId=list[index].id;
-                      Navigator.pushNamed(context, '/new-alert',arguments: a);
+                      prefix1.Alert a = prefix1.Alert();
+                      a.categoryId = list[index].id;
+                      Navigator.pushNamed(context, '/new-alert', arguments: a);
                     },
                   );
                 }

@@ -10,6 +10,8 @@ import 'package:location/location.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 
+import 'package:weflyapps/models/sent_alert.dart';
+
 class DataService {
   var userId = 0;
   var sent_alert_url =
@@ -79,6 +81,24 @@ class DataService {
         headers: {HttpHeaders.authorizationHeader: token});
     categories = await parseCategory(response);
     return categories;
+  }
+
+  Future<bool> sendAlert(Alert a) async {
+    var prefs = await SharedPreferences.getInstance();
+    token = await prefs.get("token");
+    isConnected = await hasInternet();
+    bool sended = false;
+    if (isConnected) {
+      response = await http.post(sent_alert_url,
+          headers: {HttpHeaders.authorizationHeader: token},
+          body: json.encode(a.toJson()));
+      if (response.statusCode == 201) {
+        sended = true;
+      } else {
+        sended = false;
+      }
+    }
+    return sended;
   }
 
   Future<List<Category>> parseCategory(http.Response response) async {
@@ -192,12 +212,5 @@ class DataService {
         print("Send Act Images resp -> ${json.decode(response.body)}");
       }
     }
-  }
-
-  getLocation() async {
-    location.onLocationChanged().listen((LocationData currentLocation) {
-      print(currentLocation.latitude);
-      print(currentLocation.longitude);
-    });
   }
 }

@@ -10,11 +10,13 @@ import 'package:weflyapps/models/models.dart';
 import 'package:weflyapps/models/send/activite.dart' as send;
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:location/location.dart';
 
 enum Status { Uninitialized, loading, loaded, error }
 
 class DataRepository with ChangeNotifier {
   DataService dataService = DataService();
+  var location = Location();
 
   AlertReceivedDao _alertReceivedDao = AlertReceivedDao();
   ActivitiesDao _activitiesDao = ActivitiesDao();
@@ -217,5 +219,15 @@ class DataRepository with ChangeNotifier {
       connected = false;
     }
     return connected;
+  }
+
+  getLocation() async {
+    var prefs = await SharedPreferences.getInstance();
+    location.onLocationChanged().listen((LocationData currentLocation) {
+      String loc = "${currentLocation.longitude}:${currentLocation.latitude}";
+      prefs.setString("location", loc);
+      print(currentLocation.latitude);
+      print(currentLocation.longitude);
+    });
   }
 }
