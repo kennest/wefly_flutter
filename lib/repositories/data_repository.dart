@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weflyapps/database/activities_dao.dart';
 import 'package:weflyapps/database/alerts_received_dao.dart';
 import 'package:weflyapps/database/app_database.dart';
+import 'package:weflyapps/database/categories_dao.dart';
 import 'package:weflyapps/services/data_service.dart';
 import 'package:weflyapps/models/models.dart';
 import 'package:weflyapps/models/send/activite.dart' as send;
@@ -17,6 +18,7 @@ class DataRepository with ChangeNotifier {
 
   AlertReceivedDao _alertReceivedDao = AlertReceivedDao();
   ActivitiesDao _activitiesDao = ActivitiesDao();
+  CategoriesDao _categoriesDao = CategoriesDao();
 
   List<ReceivedAlert> _received = List();
 
@@ -25,6 +27,8 @@ class DataRepository with ChangeNotifier {
   List<Activite> _completed = List();
 
   List<Activite> _uncompleted = List();
+
+  List<Category> _categories = List();
 
   double _percent = 0.0;
 
@@ -39,6 +43,8 @@ class DataRepository with ChangeNotifier {
   List<Activite> get activities => _activities;
 
   List<Activite> get uncompleted => _uncompleted;
+
+  List<Category> get categories => _categories;
 
   double get percent => _percent;
 
@@ -104,6 +110,30 @@ class DataRepository with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> fetchCategories() async {
+    _status = Status.loading;
+    notifyListeners();
+
+    bool isConnected = await hasInternet();
+    if (isConnected) {
+      _categories = await dataService.getCategories();
+      for (Category c in _categories) {
+        Directory dir = await getApplicationDocumentsDirectory();
+        await doDownload(c.remote_icone);
+        Uri uri = Uri.parse(c.remote_icone);
+        c.local_icone = "${dir.path}${uri.pathSegments.last}";
+      }
+
+      _categories.forEach((n) {
+        _categoriesDao.insert(n);
+      });
+    } else {
+      _categories = await _categoriesDao.getAllSortedById();
+    }
+    _status = Status.loaded;
+    notifyListeners();
+  }
+
   Future<bool> updateActivite(send.Activite a) async {
     bool updated = await dataService.updateActivite(a);
     if (updated) {
@@ -126,7 +156,8 @@ class DataRepository with ChangeNotifier {
     for (Activite a in list) {
       print("Act 0 ${a.id} image size-> ${a.images.length}");
       for (ImageFile p in a.images) {
-        await doDownload("https://wa.weflysoftware.com/media/${p.remote_image}");
+        await doDownload(
+            "https://wa.weflysoftware.com/media/${p.remote_image}");
         Uri uri = Uri.parse(p.remote_image);
         p.local_image = "${dir.path}${uri.pathSegments.last}";
       }

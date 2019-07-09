@@ -70,6 +70,28 @@ class DataService {
     return received;
   }
 
+  Future<List<Category>> getCategories() async {
+    var prefs = await SharedPreferences.getInstance();
+    token = await prefs.get("token");
+    isConnected = await hasInternet();
+    List<Category> categories = [];
+    response = await http.get(get_categories_url,
+        headers: {HttpHeaders.authorizationHeader: token});
+    categories = await parseCategory(response);
+    return categories;
+  }
+
+  Future<List<Category>> parseCategory(http.Response response) async {
+    List<Category> list = [];
+    var results =
+        json.decode(utf8.decode(response.bodyBytes))['results'] as List;
+    results.forEach((i) async {
+      Category c = Category.fromJson(i);
+      list.add(c);
+    });
+    return list;
+  }
+
   Future<List<ReceivedAlert>> parseReceivedAlert(http.Response response) async {
     List<ReceivedAlert> list = [];
     var results =
@@ -84,6 +106,7 @@ class DataService {
 
   //Get activities
   Future<List<Activite>> getActivities() async {
+    var prefs = await SharedPreferences.getInstance();
     token = await prefs.get("token");
     List<Activite> activities = [];
     isConnected = await hasInternet();

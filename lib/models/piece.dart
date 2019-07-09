@@ -5,7 +5,8 @@ class Piece {
   int email;
   int alerte;
 
-  Piece({this.remote_piece, this.id, this.email, this.alerte,this.local_piece});
+  Piece(
+      {this.remote_piece, this.id, this.email, this.alerte, this.local_piece});
 
   Piece.fromJson(Map<String, dynamic> json) {
     remote_piece = json['piece'];

@@ -16,7 +16,7 @@ class Category {
 
   Category.fromJson(Map<String, dynamic> json) {
     entreprise = json['entreprise'];
-    if(json['local_icone']!=null){
+    if (json['local_icone'] != null) {
       local_icone = json['local_icone'];
     }
     remote_icone = json['icone'];

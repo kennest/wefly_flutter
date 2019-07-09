@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   getData() async {
     await dataRepository.fetchReceivedAlerts();
     await dataRepository.fetchActivities();
+    await dataRepository.fetchCategories();
   }
 
   @override
@@ -160,7 +161,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     backgroundColor: Colors.green[800],
                     child: Icon(Icons.add),
                     onPressed: () {
-                      _categoryModalBottomSheet(context);
+                      _categoryModalBottomSheet(
+                          context, dataRepository.categories);
                     },
                   ),
                 );
@@ -438,23 +440,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     if (!mounted) return;
   }
 
-  void _categoryModalBottomSheet(context) {
+  void _categoryModalBottomSheet(context, List<Category> list) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
           return Container(
-            child: Wrap(
-              children: <Widget>[
-                ListTile(
-                    leading: Icon(Icons.music_note),
-                    title: Text('Music'),
-                    onTap: () => {}),
-                ListTile(
-                  leading: Icon(Icons.videocam),
-                  title: Text('Video'),
-                  onTap: () => {},
-                ),
-              ],
+            child: ListView.builder(
+              padding: EdgeInsets.all(8.0),
+              cacheExtent: 8.0,
+              shrinkWrap: true,
+              itemCount: list.length,
+              itemBuilder: (BuildContext context, int index) {
+                if (File(list[index].local_icone).existsSync()) {
+                  return ListTile(
+                    leading: Image.file(File(list[index].local_icone)),
+                    title: Text(list[index].nom),
+                    onTap: () {},
+                  );
+                }
+              },
             ),
           );
         });
