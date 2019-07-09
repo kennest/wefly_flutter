@@ -27,7 +27,7 @@ class _ActivityPageState extends State<ActivityPage> {
         title: Text("Vous avez ${activities.length} Activités"),
         actions: <Widget>[],
       ),
-      body:CustomScrollView(
+      body: CustomScrollView(
         slivers: <Widget>[
           SliverList(
             delegate: SliverChildListDelegate(
@@ -43,8 +43,12 @@ class _ActivityPageState extends State<ActivityPage> {
                       return ListTile(
                         leading: Image.file(
                             File(activities[index].images[0].local_image)),
-                        title: Text(activities[index].titre.length>11?"${activities[index].titre.substring(0, 12)}...":"${activities[index].titre}"),
-                        subtitle: Text(activities[index].description.length>19?"${activities[index].description.substring(0, 20)}...":"${activities[index].description}"),
+                        title: Text(activities[index].titre.length > 11
+                            ? "${activities[index].titre.substring(0, 12)}..."
+                            : "${activities[index].titre}"),
+                        subtitle: Text(activities[index].description.length > 19
+                            ? "${activities[index].description.substring(0, 20)}..."
+                            : "${activities[index].description}"),
                         onTap: () {
                           Navigator.pushNamed(context, '/activity-detail',
                               arguments: activities[index]);

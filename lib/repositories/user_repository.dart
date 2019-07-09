@@ -15,23 +15,23 @@ class UserRepository with ChangeNotifier {
   UserRepository.instance();
 
   void doLogin(Credential c) async {
-    _status=Status.Authenticating;
+    _status = Status.Authenticating;
     notifyListeners();
     bool loggedIn = await authService.login(c.username, c.password);
-    if(loggedIn){
-      _status=Status.Authenticated;
+    if (loggedIn) {
+      _status = Status.Authenticated;
       notifyListeners();
-    }else{
-      _status=Status.Unauthenticated;
+    } else {
+      _status = Status.Unauthenticated;
       notifyListeners();
     }
   }
 
-  void doLogout()async{
-    bool loggedOut=await authService.logout();
-    if(loggedOut){
+  void doLogout() async {
+    bool loggedOut = await authService.logout();
+    if (loggedOut) {
       print("Logout -> $loggedOut");
-      _status=Status.Unauthenticated;
+      _status = Status.Unauthenticated;
       notifyListeners();
     }
   }

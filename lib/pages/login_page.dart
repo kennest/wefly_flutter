@@ -22,13 +22,13 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     userRepository = UserRepository.instance();
     _checkToken();
-    userCtrl.text="kenyoulai@gmail.com";
-    passCtrl.text="admin12345";
+    userCtrl.text = "kenyoulai@gmail.com";
+    passCtrl.text = "admin12345";
   }
 
-  _checkToken()async{
-    var prefs=await SharedPreferences.getInstance();
-    if(prefs.containsKey("token")){
+  _checkToken() async {
+    var prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey("token")) {
       print('Token -> ${prefs.get("token")}');
       Navigator.pushNamed(context, '/home');
     }
@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
             return body();
           case Status.Authenticating:
             return Scaffold(
-              body:Center(
+              body: Center(
                 child: CircularProgressIndicator(),
               ),
             );
@@ -75,8 +75,9 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   children: <Widget>[
                     CircleAvatar(
-                      child:Image.asset(
-                      'assets/images/logo.png',),
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                      ),
                       backgroundColor: Colors.white.withOpacity(0.95),
                     ),
                     TextFormField(
@@ -85,7 +86,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     TextFormField(
                       controller: passCtrl,
-                      decoration: InputDecoration(labelText: "password",),
+                      decoration: InputDecoration(
+                        labelText: "password",
+                      ),
                       obscureText: true,
                     ),
                     RaisedButton(

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weflyapps/database/activities_dao.dart';
 import 'package:weflyapps/database/alerts_received_dao.dart';
 import 'package:weflyapps/database/app_database.dart';
 import 'package:weflyapps/services/data_service.dart';
@@ -14,7 +15,8 @@ enum Status { Uninitialized, loading, loaded, error }
 class DataRepository with ChangeNotifier {
   DataService dataService = DataService();
 
-  AlertReceivedDao _alertReceivedDao=AlertReceivedDao();
+  AlertReceivedDao _alertReceivedDao = AlertReceivedDao();
+  ActivitiesDao _activitiesDao = ActivitiesDao();
 
   List<ReceivedAlert> _received = List();
 
@@ -47,31 +49,24 @@ class DataRepository with ChangeNotifier {
     _status = Status.loading;
     notifyListeners();
 
-    _received = await dataService.getReceivedAlert();
+    bool isConnected = await hasInternet();
 
-    var prefs = await SharedPreferences.getInstance();
-
-    Directory dir = await getApplicationDocumentsDirectory();
-    for (ReceivedAlert a in _received) {
-      for (Piece p in a.alerte.properties.pieceJoinAlerte) {
-        doDownload(p.remote_piece);
-        Uri uri = Uri.parse(p.remote_piece);
-        p.local_piece = "${dir.path}${uri.pathSegments.last}";
+    if (isConnected) {
+      _received = await dataService.getReceivedAlert();
+      await startDownloadAlertFile(_received);
+      _received.forEach((f) {
+        _alertReceivedDao.insert(f);
+      });
+    } else {
+      _received = await _alertReceivedDao.getAllSortedByName();
+      for (ReceivedAlert a in _received) {
+        for (Piece p in a.alerte.properties.pieceJoinAlerte) {
+          print("piece -> ${p.local_piece} ");
+        }
       }
-      doDownload(a.alerte.properties.categorie.remote_icone);
-      Uri uri = Uri.parse(a.alerte.properties.categorie.remote_icone);
-      a.alerte.properties.categorie.local_icone =
-          "${dir.path}${uri.pathSegments.last}";
     }
 
-    _received.forEach((f){
-      _alertReceivedDao.insert(f);
-    });
-
     print('Received 0-> + ${json.encode(_received.toList())}');
-    prefs.setString("received", json.encode(_received.toList()));
-
-    print("Length X-> ${_received.length}");
     _status = Status.loaded;
     notifyListeners();
   }
@@ -81,9 +76,19 @@ class DataRepository with ChangeNotifier {
     _status = Status.loading;
     notifyListeners();
 
-    _activities = await dataService.getActivities();
+    bool isConnected = await hasInternet();
 
-    var prefs = await SharedPreferences.getInstance();
+    if (isConnected) {
+      _activities = await dataService.getActivities();
+      await startDownloadActiviteFile(_activities);
+      _activities.forEach((f) async {
+        await _activitiesDao.insert(f);
+      });
+      print("Activities length 0-> ${_activities.length}");
+    } else {
+      _activities = await _activitiesDao.getAllSortedByName();
+      print("Activities length N-> ${_activities.length}");
+    }
 
     _completed = _activities.where((a) {
       return a.statutAct == "Achevé";
@@ -95,17 +100,13 @@ class DataRepository with ChangeNotifier {
 
     computePercent();
 
-    await startDownloadActiviteFile(activities);
-
-    prefs.setString("activities", json.encode(activities.toList()));
-
     _status = Status.loaded;
     notifyListeners();
   }
 
   Future<bool> updateActivite(send.Activite a) async {
-    bool updated=await dataService.updateActivite(a);
-    if(updated) {
+    bool updated = await dataService.updateActivite(a);
+    if (updated) {
       notifyListeners();
       return updated;
     }
@@ -125,11 +126,26 @@ class DataRepository with ChangeNotifier {
     for (Activite a in list) {
       print("Act 0 ${a.id} image size-> ${a.images.length}");
       for (ImageFile p in a.images) {
-        doDownload("https://wa.weflysoftware.com/media/${p.remote_image}");
+        await doDownload("https://wa.weflysoftware.com/media/${p.remote_image}");
         Uri uri = Uri.parse(p.remote_image);
         p.local_image = "${dir.path}${uri.pathSegments.last}";
       }
       print("Act N ${a.id} image size-> ${a.images.length}");
+    }
+  }
+
+  startDownloadAlertFile(List<ReceivedAlert> list) async {
+    Directory dir = await getApplicationDocumentsDirectory();
+    for (ReceivedAlert a in list) {
+      for (Piece p in a.alerte.properties.pieceJoinAlerte) {
+        await doDownload(p.remote_piece);
+        Uri uri = Uri.parse(p.remote_piece);
+        p.local_piece = "${dir.path}${uri.pathSegments.last}";
+      }
+      await doDownload(a.alerte.properties.categorie.remote_icone);
+      Uri uri = Uri.parse(a.alerte.properties.categorie.remote_icone);
+      a.alerte.properties.categorie.local_icone =
+          "${dir.path}${uri.pathSegments.last}";
     }
   }
 
@@ -148,7 +164,8 @@ class DataRepository with ChangeNotifier {
         }).then((HttpClientResponse response) {
           response.listen((d) => _downloadData.addAll(d), onDone: () {
             fileSave.writeAsBytes(_downloadData);
-            print("Download Done!-> ${uri.pathSegments.last}");
+            print("Download Done! -> ${uri.pathSegments.last}");
+            notifyListeners();
           });
         });
       }

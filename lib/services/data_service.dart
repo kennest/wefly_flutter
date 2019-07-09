@@ -11,9 +11,13 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 
 class DataService {
+  var userId = 0;
   var sent_alert_url =
       "https://wa.weflysoftware.com/communications/api/alertes/";
   var get_employee_url =
+      "https://wa.weflysoftware.com/communications/api/liste-employes/";
+
+  var get_current_employee_url =
       "https://wa.weflysoftware.com/communications/api/liste-employes/";
   var received_alert_url =
       "https://wa.weflysoftware.com/communications/api/alerte-receive-status/";
@@ -59,37 +63,27 @@ class DataService {
           headers: {HttpHeaders.authorizationHeader: token});
       if (response != null) {
         var next = json.decode(utf8.decode(response.bodyBytes))['next'];
-        var results =
-            json.decode(utf8.decode(response.bodyBytes))['results'] as List;
-        results.forEach((i) async {
-          ReceivedAlert a = ReceivedAlert.fromJson(i);
-          received.add(a);
-        });
-        print('Received 0-> + ${json.encode(received.toList())}');
-        prefs.setString("received", json.encode(received.toList()));
-        print("Received 0-> ${received.length}");
-        return received;
-      }
-    } else {
-      var data = prefs.get("received");
-      print('Received 1->' + json.decode(data).toString());
-      if (data != null) {
-        var results = json.decode(data) as List;
-        results.forEach((i) async {
-          ReceivedAlert a = ReceivedAlert.fromJson(i);
-          received.add(a);
-        });
-
-        print("Received 1-> ${received.length}");
+        received = await parseReceivedAlert(response);
         return received;
       }
     }
     return received;
   }
 
+  Future<List<ReceivedAlert>> parseReceivedAlert(http.Response response) async {
+    List<ReceivedAlert> list = [];
+    var results =
+        json.decode(utf8.decode(response.bodyBytes))['results'] as List;
+    results.forEach((i) async {
+      ReceivedAlert a = ReceivedAlert.fromJson(i);
+      list.add(a);
+    });
+    print('Received 0-> + ${json.encode(list.toList())}');
+    return list;
+  }
+
   //Get activities
   Future<List<Activite>> getActivities() async {
-    var prefs = await SharedPreferences.getInstance();
     token = await prefs.get("token");
     List<Activite> activities = [];
     isConnected = await hasInternet();
@@ -98,38 +92,31 @@ class DataService {
           headers: {HttpHeaders.authorizationHeader: token});
       if (response != null) {
         var next = json.decode(utf8.decode(response.bodyBytes))['next'];
-        var results =
-            json.decode(utf8.decode(response.bodyBytes))['results'] as List;
-        results.forEach((i) async {
-          Activite a = Activite.fromJson(i);
-          activities.add(a);
-        });
-        print('Activities 0-> + ${json.encode(activities.toList())}');
-        prefs.setString("activities", json.encode(activities.toList()));
-        print("Activities 0-> ${activities.length}");
-        return activities;
-      }
-    } else {
-      var data = prefs.get("activities");
-      print('Activities 1->' + json.decode(data).toString());
-      if (data != null) {
-        var results = json.decode(data) as List;
-        results.forEach((i) async {
-          Activite a = Activite.fromJson(i);
-          activities.add(a);
-        });
-        print("Activities 1-> ${activities.length}");
+        activities = await parseActivities(response);
         return activities;
       }
     }
     return activities;
   }
 
+  Future<List<Activite>> parseActivities(http.Response response) async {
+    List<Activite> list = [];
+    var results = [];
+    results = json.decode(utf8.decode(response.bodyBytes))['results'] as List;
+    results.forEach((i) async {
+      Activite a = Activite.fromJson(i);
+      list.add(a);
+    });
+    print('Activities 0-> + ${json.encode(list.toList())}');
+    print("Activities 0-> ${list.length}");
+    return list;
+  }
+
   //Update activity status
   Future<bool> updateActivite(send.Activite a) async {
     var prefs = await SharedPreferences.getInstance();
     token = await prefs.get("token");
-    bool updated=false;
+    bool updated = false;
     print("Update act Body json -> ${json.encode(a.toJson())}");
     bool isConnected = await hasInternet();
     if (isConnected) {
@@ -138,11 +125,12 @@ class DataService {
           body: json.encode(a.toJson()));
 
       print("Update Act resp Code -> ${response.statusCode}");
-      if (response.statusCode == 201 || response.statusCode==200) {
-        print("Update Act resp -> ${json.decode(utf8.decode(response.bodyBytes))}");
-        String res=json.decode(utf8.decode(response.bodyBytes));
-        if(res==a.statutAct){
-          updated=true;
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        print(
+            "Update Act resp -> ${json.decode(utf8.decode(response.bodyBytes))}");
+        String res = json.decode(utf8.decode(response.bodyBytes));
+        if (res == a.statutAct) {
+          updated = true;
           a.images.forEach((i) async {
             await sendActiviteImage(i, a);
           });
@@ -177,7 +165,7 @@ class DataService {
           body: json.encode(data));
 
       print("Send Act Image resp Code -> ${response.statusCode}");
-      if (response.statusCode == 201 || response.statusCode==200) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
         print("Send Act Images resp -> ${json.decode(response.body)}");
       }
     }

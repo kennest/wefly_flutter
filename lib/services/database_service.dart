@@ -1,8 +1,9 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
-class DataBaseService{
-  openDB()async{
+
+class DataBaseService {
+  openDB() async {
     final Future<Database> database = openDatabase(
       // Set the path to the database. Note: Using the `join` function from the
       // `path` package is best practice to ensure the path is correctly
