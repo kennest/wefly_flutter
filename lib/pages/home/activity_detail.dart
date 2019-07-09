@@ -148,7 +148,6 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
   //Si le statut es acheve alors on prend une image pr l'attester
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
-
     setState(() {
       _image = image;
     });

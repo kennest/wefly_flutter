@@ -9,7 +9,7 @@ import 'package:weflyapps/repositories/data_repository.dart' as prefix0;
 import 'package:weflyapps/repositories/user_repository.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:path/path.dart' as p;
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:weflyapps/models/send/alert.dart' as prefix1;
 
 class HomePage extends StatefulWidget {
   @override
@@ -414,8 +414,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     // Configure BackgroundFetch.
     BackgroundFetch.configure(
         BackgroundFetchConfig(
-            minimumFetchInterval: 1,
-            forceReload: true,
+            minimumFetchInterval: 10,
+            forceReload: false,
             startOnBoot: true,
             stopOnTerminate: false,
             enableHeadless: true), () async {
@@ -455,7 +455,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   return ListTile(
                     leading: Image.file(File(list[index].local_icone)),
                     title: Text(list[index].nom),
-                    onTap: () {},
+                    onTap: () {
+                      prefix1.Alert a=prefix1.Alert();
+                      a.categoryId=list[index].id;
+                      Navigator.pushNamed(context, '/new-alert',arguments: a);
+                    },
                   );
                 }
               },
@@ -468,6 +472,5 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    //Provider.of<DataRepository>(context).dispose();
   }
 }

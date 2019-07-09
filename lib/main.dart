@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
         '/alert': (context) => AlertPage(),
         '/activity-detail': (context) => ActivityDetailPage(),
         '/activity-page': (context) => ActivityPage(),
+        '/new-alert': (context) => NewAlertPage(),
       },
     );
   }
