@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:weflyapps/models/models.dart';
 import 'package:weflyapps/pages/login_page.dart';
-import 'package:weflyapps/repositories/data_repository.dart' as prefix0;
-import 'package:weflyapps/repositories/user_repository.dart';
+import 'package:weflyapps/controllers/data_controller.dart' as prefix0;
+import 'package:weflyapps/controllers/user_controller.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:path/path.dart' as p;
 import 'package:weflyapps/models/send/alert.dart' as prefix1;
@@ -17,30 +17,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  prefix0.DataRepository dataRepository;
-  UserRepository userRepository;
+  prefix0.DataController dataController;
+  UserController userController;
 
   @override
   void initState() {
     super.initState();
-    userRepository = UserRepository.instance();
-    dataRepository = prefix0.DataRepository.instance();
+    userController = UserController.instance();
+    dataController = prefix0.DataController.instance();
     getData();
     initPlatformState();
   }
 
   getData() async {
-    await dataRepository.fetchReceivedAlerts();
-    await dataRepository.fetchActivities();
-    await dataRepository.fetchCategories();
-    await dataRepository.getLocation();
+    await dataController.fetchReceivedAlerts();
+    await dataController.fetchActivities();
+    await dataController.fetchCategories();
+    await dataController.getLocation();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListenableProvider<UserRepository>.value(
-        value: userRepository,
-        child: Consumer<UserRepository>(
+    return ListenableProvider<UserController>.value(
+        value: userController,
+        child: Consumer<UserController>(
           builder: (context, user, child) {
             switch (user.status) {
               case Status.Uninitialized:
@@ -86,9 +86,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                         ),
                       )),
-                  body: ListenableProvider<prefix0.DataRepository>.value(
-                    value: dataRepository,
-                    child: Consumer<prefix0.DataRepository>(
+                  body: ListenableProvider<prefix0.DataController>.value(
+                    value: dataController,
+                    child: Consumer<prefix0.DataController>(
                         builder: (context, data, child) {
                       return SingleChildScrollView(
                         child: Column(
@@ -163,7 +163,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     child: Icon(Icons.add),
                     onPressed: () {
                       _categoryModalBottomSheet(
-                          context, dataRepository.categories);
+                          context, dataController.categories);
                     },
                   ),
                 );
@@ -298,7 +298,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       .properties
                                       .pieceJoinAlerte[1]
                                       .local_piece))
-                                  : AssetImage('assets/images/loader.gif'),
+                                  : NetworkImage(received[index]
+                                      .alerte
+                                      .properties
+                                      .pieceJoinAlerte[1]
+                                      .remote_piece),
                               fit: BoxFit.cover)),
                       child: Stack(
                         children: <Widget>[
@@ -348,7 +352,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   //Activities listview
-  activitiesListView(prefix0.DataRepository data) {
+  activitiesListView(prefix0.DataController data) {
     return Container(
         margin: EdgeInsets.all(5.0),
         height: 140.0,
@@ -364,7 +368,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.fromLTRB(8.0, 15.0, 10.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(8.0, 15.0, 0.0, 0.0),
                       child: Row(
                         children: <Widget>[
                           Text("Vos activites de la journée",

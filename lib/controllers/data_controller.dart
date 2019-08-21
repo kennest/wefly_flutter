@@ -14,7 +14,7 @@ import 'package:location/location.dart';
 
 enum Status { Uninitialized, loading, loaded, error }
 
-class DataRepository with ChangeNotifier {
+class DataController with ChangeNotifier {
   DataService dataService = DataService();
   var location = Location();
 
@@ -50,7 +50,7 @@ class DataRepository with ChangeNotifier {
 
   double get percent => _percent;
 
-  DataRepository.instance();
+  DataController.instance();
 
   //Fetch all received alerts
   Future<void> fetchReceivedAlerts() async {
@@ -153,6 +153,7 @@ class DataRepository with ChangeNotifier {
     notifyListeners();
   }
 
+//attempt to download image of the activities
   startDownloadActiviteFile(List<Activite> list) async {
     Directory dir = await getApplicationDocumentsDirectory();
     for (Activite a in list) {
@@ -162,11 +163,13 @@ class DataRepository with ChangeNotifier {
             "https://wa.weflysoftware.com/media/${p.remote_image}");
         Uri uri = Uri.parse(p.remote_image);
         p.local_image = "${dir.path}${uri.pathSegments.last}";
+        print("Local image -> ${p.local_image}");
       }
       print("Act N ${a.id} image size-> ${a.images.length}");
     }
   }
 
+//attempt to download image of the received alerts
   startDownloadAlertFile(List<ReceivedAlert> list) async {
     Directory dir = await getApplicationDocumentsDirectory();
     for (ReceivedAlert a in list) {
@@ -182,6 +185,7 @@ class DataRepository with ChangeNotifier {
     }
   }
 
+//Pure download task
   Future<void> doDownload(String url) async {
     bool isConnected = await hasInternet();
     if (isConnected) {

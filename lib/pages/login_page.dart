@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weflyapps/models/models.dart';
-import 'package:weflyapps/repositories/user_repository.dart';
+import 'package:weflyapps/controllers/user_controller.dart';
 import 'pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,7 +12,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  UserRepository userRepository;
+  UserController userController;
   TextEditingController userCtrl = TextEditingController();
   TextEditingController passCtrl = TextEditingController();
 
@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    userRepository = UserRepository.instance();
+    userController = UserController.instance();
     _checkToken();
     userCtrl.text = "kenyoulai@gmail.com";
     passCtrl.text = "admin12345";
@@ -36,9 +36,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableProvider<UserRepository>.value(
-      value: userRepository,
-      child: Consumer<UserRepository>(builder: (context, user, child) {
+    return ListenableProvider<UserController>.value(
+      value: userController,
+      child: Consumer<UserController>(builder: (context, user, child) {
         switch (user.status) {
           case Status.Uninitialized:
             return body();
@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                           Colors.black.withOpacity(0.5), BlendMode.srcATop),
                       fit: BoxFit.cover)),
               child: Container(
-                margin: EdgeInsets.fromLTRB(20.0, 200.0, 20.0, 250.0),
+                margin: EdgeInsets.fromLTRB(20.0, 200.0, 20.0, 150.0),
                 padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
                 color: Colors.white.withOpacity(0.95),
                 child: Column(
@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: Text("Login"),
                       onPressed: () {
                         Credential c = Credential(userCtrl.text, passCtrl.text);
-                        userRepository.doLogin(c);
+                        userController.doLogin(c);
                       },
                     )
                   ],
@@ -108,6 +108,6 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    //Provider.of<UserRepository>(context).dispose();
+    //Provider.of<UserController>(context).dispose();
   }
 }

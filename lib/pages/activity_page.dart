@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:weflyapps/models/models.dart';
-import 'package:weflyapps/repositories/data_repository.dart';
 
 class ActivityPage extends StatefulWidget {
   @override
@@ -41,8 +39,8 @@ class _ActivityPageState extends State<ActivityPage> {
                     scrollDirection: Axis.vertical,
                     itemBuilder: (BuildContext context, int index) {
                       return ListTile(
-                        leading: Image.file(
-                            File(activities[index].images[0].local_image)),
+                        leading: File(activities[index].images[0].local_image).existsSync()?Image.file(
+                            File(activities[index].images[0].local_image)):Image.network(activities[index].images[0].remote_image),
                         title: Text(activities[index].titre.length > 11
                             ? "${activities[index].titre.substring(0, 12)}..."
                             : "${activities[index].titre}"),

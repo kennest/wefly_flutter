@@ -4,7 +4,7 @@ import 'package:weflyapps/services/services.dart';
 
 enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 
-class UserRepository with ChangeNotifier {
+class UserController with ChangeNotifier {
   var authService = AuthService();
   User _user;
   Status _status = Status.Uninitialized;
@@ -12,7 +12,7 @@ class UserRepository with ChangeNotifier {
   User get user => _user;
   Status get status => _status;
 
-  UserRepository.instance();
+  UserController.instance();
 
   void doLogin(Credential c) async {
     _status = Status.Authenticating;

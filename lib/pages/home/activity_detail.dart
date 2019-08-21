@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:weflyapps/models/send/activite.dart' as toSend;
 import 'package:flutter/material.dart';
 import 'package:weflyapps/models/models.dart';
-import 'package:weflyapps/repositories/data_repository.dart';
-import 'package:weflyapps/repositories/user_repository.dart';
+import 'package:weflyapps/controllers/data_controller.dart';
+import 'package:weflyapps/controllers/user_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -185,9 +185,9 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
         titre: _activite.titre);
 
     bool updated =
-        await Provider.of<DataRepository>(context).updateActivite(send);
+        await Provider.of<DataController>(context).updateActivite(send);
     if (updated) {
-      Provider.of<DataRepository>(context).uncompleted.map((n) {
+      Provider.of<DataController>(context).uncompleted.map((n) {
         if (n.id == activite.id) {
           n.statutAct = activite.statutAct;
         }
